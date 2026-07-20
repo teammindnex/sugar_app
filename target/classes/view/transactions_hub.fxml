@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" styleClass="root">
+    <center>
+        <TabPane tabClosingPolicy="UNAVAILABLE" styleClass="floating">
+            <tabs>
+                <Tab text="Purchases">
+                    <fx:include source="purchase.fxml"/>
+                </Tab>
+                <Tab text="Sales">
+                    <fx:include source="sale.fxml"/>
+                </Tab>
+                <Tab text="Worker Entries">
+                    <fx:include source="worker_entry.fxml"/>
+                </Tab>
+                <Tab text="Trips">
+                    <fx:include source="transport_trip.fxml"/>
+                </Tab>
+                <Tab text="Expenses">
+                    <fx:include source="expense.fxml"/>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </center>
+</BorderPane>

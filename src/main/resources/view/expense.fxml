@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sugarcane.erp.controller.ExpenseController" styleClass="root">
+    
+    <top>
+        <HBox alignment="CENTER_LEFT" styleClass="card">
+            <padding><Insets top="10" right="20" bottom="10" left="20"/></padding>
+            <Label fx:id="titleLabel" text="%expense.title" styleClass="header-label" />
+        </HBox>
+    </top>
+
+    <center>
+        <SplitPane dividerPositions="0.40">
+            <!-- Left Side: Form -->
+            <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+                <VBox spacing="15.0" styleClass="card">
+                    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                    
+                    <Label text="%field.date" styleClass="label" />
+                    <DatePicker fx:id="expenseDatePicker" maxWidth="Infinity" />
+                    
+                    <Label text="%expense.category" styleClass="label" />
+                    <ComboBox fx:id="categoryComboBox" maxWidth="Infinity" promptText="Select Category" />
+                    
+                    <Label text="%expense.amount" styleClass="label" />
+                    <TextField fx:id="amountField" text="0.0" />
+                    
+                    <Label text="%expense.mode" styleClass="label" />
+                    <ComboBox fx:id="paymentModeComboBox" maxWidth="Infinity" promptText="Select Payment Mode" />
+                    
+                    <Label text="Description" styleClass="label" />
+                    <TextArea fx:id="descriptionArea" prefRowCount="3" />
+                    
+                    <HBox spacing="10" alignment="CENTER" style="-fx-margin-top: 10px;">
+                        <Button fx:id="btnSave" text="%btn.save" onAction="#handleSave" styleClass="button" />
+                        <Button fx:id="btnDelete" text="%btn.delete" onAction="#handleDelete" style="-fx-background-color: -error-color; -fx-text-fill: white;" />
+                        <Button fx:id="btnClear" text="%btn.clear" onAction="#handleClear" styleClass="button-secondary" />
+                    </HBox>
+                </VBox>
+            </ScrollPane>
+            
+            <!-- Right Side: Table -->
+            <VBox styleClass="card">
+                <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                
+                <Label text="Recent Expenses" styleClass="sub-header-label" style="-fx-padding: 0 0 10 0;" />
+                
+                <TableView fx:id="expenseTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colDate" text="%field.date" prefWidth="100" />
+                        <TableColumn fx:id="colCategory" text="%expense.category" prefWidth="120" />
+                        <TableColumn fx:id="colAmount" text="%expense.amount" prefWidth="100" />
+                        <TableColumn fx:id="colMode" text="%expense.mode" prefWidth="100" />
+                    </columns>
+                </TableView>
+            </VBox>
+        </SplitPane>
+    </center>
+    
+</BorderPane>

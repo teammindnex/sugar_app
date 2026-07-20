@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sugarcane.erp.controller.TransportTripController" styleClass="root">
+    
+    <top>
+        <HBox alignment="CENTER_LEFT" styleClass="card">
+            <padding><Insets top="10" right="20" bottom="10" left="20"/></padding>
+            <Label fx:id="titleLabel" text="%transportTrip.title" styleClass="header-label" />
+        </HBox>
+    </top>
+
+    <center>
+        <SplitPane dividerPositions="0.45">
+            <!-- Left Side: Form -->
+            <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+                <VBox spacing="10.0" styleClass="card">
+                    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                    
+                    <Label text="%menu.transports" styleClass="label" />
+                    <ComboBox fx:id="transportComboBox" maxWidth="Infinity" promptText="Select Transport" />
+                    
+                    <Label text="%field.date" styleClass="label" />
+                    <DatePicker fx:id="tripDatePicker" maxWidth="Infinity" />
+                    
+                    <HBox spacing="10">
+                        <VBox HBox.hgrow="ALWAYS">
+                            <Label text="Farmer (Optional)" styleClass="label" />
+                            <ComboBox fx:id="farmerComboBox" maxWidth="Infinity" promptText="Select Farmer" />
+                        </VBox>
+                        <VBox HBox.hgrow="ALWAYS">
+                            <Label text="Customer (Optional)" styleClass="label" />
+                            <ComboBox fx:id="customerComboBox" maxWidth="Infinity" promptText="Select Customer" />
+                        </VBox>
+                    </HBox>
+                    
+                    <HBox spacing="10">
+                        <VBox HBox.hgrow="ALWAYS">
+                            <Label text="%transportTrip.pickup" styleClass="label" />
+                            <TextField fx:id="pickupLocationField" />
+                        </VBox>
+                        <VBox HBox.hgrow="ALWAYS">
+                            <Label text="%transportTrip.dest" styleClass="label" />
+                            <TextField fx:id="destinationField" />
+                        </VBox>
+                    </HBox>
+                    
+                    <Label text="Weight" styleClass="label" />
+                    <TextField fx:id="weightField" text="0.0" />
+                    
+                    <Separator style="-fx-padding: 5px;" />
+                    
+                    <Label text="Charges &amp; Deductions" styleClass="label" style="-fx-font-weight: bold;" />
+                    <HBox spacing="10">
+                        <VBox HBox.hgrow="ALWAYS">
+                            <Label text="Trip Charge" styleClass="label" />
+                            <TextField fx:id="tripChargeField" text="0.0" />
+                        </VBox>
+                        <VBox HBox.hgrow="ALWAYS">
+                            <Label text="Diesel" styleClass="label" />
+                            <TextField fx:id="dieselField" text="0.0" />
+                        </VBox>
+                    </HBox>
+                    <HBox spacing="10">
+                        <VBox HBox.hgrow="ALWAYS">
+                            <Label text="Toll" styleClass="label" />
+                            <TextField fx:id="tollField" text="0.0" />
+                        </VBox>
+                        <VBox HBox.hgrow="ALWAYS">
+                            <Label text="Advance" styleClass="label" />
+                            <TextField fx:id="advanceField" text="0.0" />
+                        </VBox>
+                    </HBox>
+                    
+                    <Separator style="-fx-padding: 5px;" />
+                    
+                    <HBox spacing="10">
+                        <VBox HBox.hgrow="ALWAYS">
+                            <Label text="%transportTrip.balance" styleClass="label" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: -primary-color;" />
+                            <TextField fx:id="balanceField" text="0.0" editable="false" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-background-color: #e8f5e9;" />
+                        </VBox>
+                        <VBox HBox.hgrow="ALWAYS">
+                            <Label text="Status" styleClass="label" />
+                            <ComboBox fx:id="statusComboBox" maxWidth="Infinity" />
+                        </VBox>
+                    </HBox>
+                    
+                    <HBox spacing="10" alignment="CENTER" style="-fx-margin-top: 10px;">
+                        <Button fx:id="btnSave" text="%btn.save" onAction="#handleSave" styleClass="button" />
+                        <Button fx:id="btnDelete" text="%btn.delete" onAction="#handleDelete" style="-fx-background-color: -error-color; -fx-text-fill: white;" />
+                        <Button fx:id="btnClear" text="%btn.clear" onAction="#handleClear" styleClass="button-secondary" />
+                    </HBox>
+                </VBox>
+            </ScrollPane>
+            
+            <!-- Right Side: Table -->
+            <VBox styleClass="card">
+                <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                
+                <Label text="Recent Trips" styleClass="sub-header-label" style="-fx-padding: 0 0 10 0;" />
+                
+                <TableView fx:id="tripTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colDate" text="%field.date" prefWidth="90" />
+                        <TableColumn fx:id="colTransport" text="%menu.transports" prefWidth="100" />
+                        <TableColumn fx:id="colPickup" text="%transportTrip.pickup" prefWidth="100" />
+                        <TableColumn fx:id="colDest" text="%transportTrip.dest" prefWidth="100" />
+                        <TableColumn fx:id="colBalance" text="%transportTrip.balance" prefWidth="80" />
+                    </columns>
+                </TableView>
+            </VBox>
+        </SplitPane>
+    </center>
+    
+</BorderPane>

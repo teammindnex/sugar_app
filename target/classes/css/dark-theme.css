@@ -1,0 +1,82 @@
+/* Base Variables for Dark Theme */
+* {
+    -primary-color: #81c784; /* Lighter green for dark mode */
+    -primary-dark: #4caf50;
+    -secondary-color: #ffb74d;
+    -bg-color: #121212;
+    -surface-color: #1e1e1e;
+    -text-color: #ffffff;
+    -text-muted: #b0bec5;
+    -border-color: #333333;
+    -error-color: #ef5350;
+}
+
+.root {
+    -fx-background-color: -bg-color;
+    -fx-font-family: 'Nirmala UI', 'Mangal', 'Arial Unicode MS', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    -fx-font-size: 14px;
+}
+
+/* Material Design Card */
+.card {
+    -fx-background-color: -surface-color;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 10, 0, 0, 2);
+    -fx-background-radius: 8px;
+    -fx-padding: 20px;
+}
+
+/* Buttons */
+.button {
+    -fx-background-color: -primary-color;
+    -fx-text-fill: #121212; /* Dark text on light button in dark mode */
+    -fx-font-weight: bold;
+    -fx-background-radius: 4px;
+    -fx-padding: 8px 16px;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: -primary-dark;
+    -fx-text-fill: white;
+}
+
+.button-secondary {
+    -fx-background-color: transparent;
+    -fx-text-fill: -primary-color;
+    -fx-border-color: -primary-color;
+    -fx-border-radius: 4px;
+}
+
+.button-secondary:hover {
+    -fx-background-color: rgba(129, 199, 132, 0.1);
+}
+
+/* Text Fields */
+.text-field, .password-field {
+    -fx-background-color: #2c2c2c;
+    -fx-border-color: -border-color;
+    -fx-border-radius: 4px;
+    -fx-padding: 8px;
+    -fx-text-fill: -text-color;
+    -fx-prompt-text-fill: -text-muted;
+}
+
+.text-field:focused, .password-field:focused {
+    -fx-border-color: -primary-color;
+}
+
+/* Labels */
+.label {
+    -fx-text-fill: -text-color;
+}
+
+.header-label {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -text-color;
+}
+
+.sub-header-label {
+    -fx-font-size: 18px;
+    -fx-text-fill: -text-muted;
+}

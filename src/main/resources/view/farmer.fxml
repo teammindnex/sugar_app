@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sugarcane.erp.controller.FarmerController" styleClass="root">
+    
+    <center>
+        <TabPane tabClosingPolicy="UNAVAILABLE">
+            <tabs>
+                <!-- NEW BILL TAB -->
+                <Tab text="नवीन बिल (New Bill)">
+                    <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color: transparent;">
+                        <VBox spacing="20">
+                            <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                            
+                            <Label text="नवीन शेतकरी बिल (New Farmer Bill)" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+                            
+                            <!-- Farmer Details -->
+                            <TitledPane text="शेतकऱ्याचा तपशील" collapsible="false">
+                                <GridPane hgap="15" vgap="15">
+                                    <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                                    
+                                    <Label text="शेतकऱ्याचे नाव:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                                    <TextField fx:id="farmerNameField" promptText="शेतकऱ्याचे नाव" prefWidth="250" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                                    
+                                    <Label text="मोबाईल नंबर:" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                                    <TextField fx:id="mobileField" promptText="मोबाईल नंबर" prefWidth="150" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+                                    
+                                    <Label text="तारीख:" GridPane.columnIndex="4" GridPane.rowIndex="0"/>
+                                    <DatePicker fx:id="datePicker" prefWidth="150" GridPane.columnIndex="5" GridPane.rowIndex="0"/>
+                                    
+                                    <Label text="बिल नं:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                                    <TextField fx:id="billNoField" promptText="FRM-2026-0042" disable="true" prefWidth="150" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                                    
+                                    <Label text="ट्रान्सपोर्ट:" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                                    <TextField fx:id="transportField" prefWidth="150" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+                                    
+                                    <Label text="गाडी नं:" GridPane.columnIndex="4" GridPane.rowIndex="1"/>
+                                    <TextField fx:id="vehicleNoField" promptText="गाडी नं" prefWidth="150" GridPane.columnIndex="5" GridPane.rowIndex="1"/>
+                                </GridPane>
+                            </TitledPane>
+                            
+                            <!-- Product Entry -->
+                            <TitledPane text="उत्पादनाची नोंद" collapsible="false">
+                                <HBox spacing="20" alignment="BOTTOM_LEFT">
+                                    <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                                    
+                                    <VBox spacing="5">
+                                        <Label text="उसाचा प्रकार"/>
+                                        <ComboBox fx:id="caneTypeCombo" prefWidth="150" promptText="उसाचा प्रकार निवडा"/>
+                                    </VBox>
+                                    
+                                    <VBox spacing="5">
+                                        <Label text="वजन (किलो)"/>
+                                        <TextField fx:id="weightField" promptText="वजन (किलो)" prefWidth="100"/>
+                                    </VBox>
+                                    
+                                    <VBox spacing="5">
+                                        <Label text="भाव (प्रति टन)"/>
+                                        <TextField fx:id="rateField" promptText="प्रति टन" prefWidth="120"/>
+                                    </VBox>
+                                    
+                                    <Button text="वस्तू जोडा" onAction="#handleAddItem" style="-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-padding: 8 20;"/>
+                                </HBox>
+                            </TitledPane>
+                            
+                            <!-- Items Table -->
+                            <TableView fx:id="itemTable" VBox.vgrow="ALWAYS">
+                                <columns>
+                                    <TableColumn fx:id="colCaneType" text="उसाचा प्रकार" prefWidth="250"/>
+                                    <TableColumn fx:id="colWeight" text="वजन" prefWidth="150"/>
+                                    <TableColumn fx:id="colRate" text="दर (प्रति टन)" prefWidth="150"/>
+                                    <TableColumn fx:id="colAmount" text="रक्कम" prefWidth="200"/>
+                                </columns>
+                            </TableView>
+                            
+                            <!-- Footer Section -->
+                            <HBox spacing="30">
+                                <!-- Action Buttons -->
+                                <VBox spacing="10">
+                                    <HBox spacing="10">
+                                        <Button text="बिल प्रिंट करा" style="-fx-background-color: #22c55e; -fx-text-fill: white; -fx-padding: 10 20; -fx-font-weight: bold;" onAction="#handlePrintBill"/>
+                                        <Button text="WhatsApp पाठवा" style="-fx-background-color: #22c55e; -fx-text-fill: white; -fx-padding: 10 20; -fx-font-weight: bold;" onAction="#handleWhatsApp"/>
+                                    </HBox>
+                                    <HBox spacing="10">
+                                        <Button text="निवडलेले काढा" style="-fx-background-color: #ef4444; -fx-text-fill: white; -fx-padding: 10 20; -fx-font-weight: bold;" onAction="#handleRemoveItem"/>
+                                        <Button text="फॉर्म साफ करा" style="-fx-background-color: #f59e0b; -fx-text-fill: white; -fx-padding: 10 20; -fx-font-weight: bold;" onAction="#handleClearForm"/>
+                                    </HBox>
+                                </VBox>
+                                
+                                <Region HBox.hgrow="ALWAYS" />
+                                
+                                <!-- Totals -->
+                                <VBox spacing="15" style="-fx-background-color: #f1f5f9; -fx-padding: 20; -fx-border-color: #cbd5e1; -fx-border-radius: 5; -fx-background-radius: 5;" minWidth="300">
+                                    <HBox spacing="20" alignment="CENTER_RIGHT">
+                                        <Label text="एकूण जमा (Total Amt):" style="-fx-font-size: 14px;"/>
+                                        <Label fx:id="totalAmtLabel" text="0.00" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                                    </HBox>
+                                    <HBox spacing="20" alignment="CENTER_RIGHT">
+                                        <Label text="मागील देणे:" style="-fx-font-size: 14px;"/>
+                                        <TextField fx:id="previousBalanceField" text="0.00" prefWidth="100" alignment="CENTER_RIGHT"/>
+                                    </HBox>
+                                    <HBox spacing="20" alignment="CENTER_RIGHT">
+                                        <Label text="उचल:" style="-fx-font-size: 14px;"/>
+                                        <TextField fx:id="advanceField" text="0.00" prefWidth="100" alignment="CENTER_RIGHT"/>
+                                    </HBox>
+                                    <Separator />
+                                    <HBox spacing="20" alignment="CENTER_RIGHT">
+                                        <Label text="अंतिम शिल्लक:" style="-fx-font-size: 18px; -fx-text-fill: #ef4444; -fx-font-weight: bold;"/>
+                                        <Label fx:id="finalBalanceLabel" text="0.00" style="-fx-font-size: 18px; -fx-text-fill: #ef4444; -fx-font-weight: bold;"/>
+                                    </HBox>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                    </ScrollPane>
+                </Tab>
+                
+                <!-- FARMER HISTORY TAB -->
+                <Tab text="शेतकरी इतिहास (Farmer History)">
+                    <VBox spacing="15" style="-fx-background-color: white;">
+                        <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                        
+                        <Label text="शेतकरी इतिहास (Farmer History)" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+                        
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Label text="शोधा:" />
+                            <TextField fx:id="searchHistoryField" prefWidth="200" />
+                            <Button text="शोधा" style="-fx-background-color: #3b82f6; -fx-text-fill: white;" />
+                            <Button text="रिफ्रेश" style="-fx-background-color: #64748b; -fx-text-fill: white;" onAction="#loadFarmers" />
+                            
+                            <Region HBox.hgrow="ALWAYS" />
+                            
+                            <Button text="Excel" style="-fx-background-color: #22c55e; -fx-text-fill: white;" onAction="#handleExportExcel" />
+                            <Button text="Khatavani" style="-fx-background-color: #64748b; -fx-text-fill: white;" onAction="#handleOpenLedger" />
+                            <Button text="Payment करा" style="-fx-background-color: #a855f7; -fx-text-fill: white;" onAction="#handlePayment" />
+                            <Button text="हिशोब क्लोज करा" style="-fx-background-color: #f59e0b; -fx-text-fill: white;" onAction="#handleCloseAccount" />
+                            <Button text="नोंद काढा" style="-fx-background-color: #ef4444; -fx-text-fill: white;" onAction="#handleDeleteRecord" />
+                        </HBox>
+                        
+                        <TableView fx:id="farmerHistoryTable" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="colHistName" text="शेतकऱ्याचे नाव" prefWidth="200" />
+                                <TableColumn fx:id="colHistMobile" text="मोबाईल नंबर" prefWidth="150" />
+                                <TableColumn fx:id="colHistTotalSales" text="एकूण विक्री" prefWidth="150" />
+                                <TableColumn fx:id="colHistPayable" text="देणे बाकी" prefWidth="150" />
+                                <TableColumn fx:id="colHistDate" text="खरेदीची तारीख" prefWidth="150" />
+                                <TableColumn fx:id="colHistItems" text="विक्री केलेले माल" prefWidth="200" />
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </center>
+    
+</BorderPane>

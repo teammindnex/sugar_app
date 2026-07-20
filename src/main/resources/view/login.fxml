@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane fx:id="rootPane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sugarcane.erp.controller.LoginController" styleClass="root">
+    
+    <ImageView fitWidth="${rootPane.width}" fitHeight="${rootPane.height}" preserveRatio="false">
+        <image>
+            <Image url="@/images/sugarcane_bg.png" />
+        </image>
+    </ImageView>
+
+    <VBox alignment="CENTER" spacing="20.0">
+        <padding>
+            <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+        </padding>
+
+    <VBox alignment="CENTER" spacing="15.0" styleClass="card" maxWidth="300">
+        <Label fx:id="titleLabel" text="%admin.login" styleClass="header-label" />
+        
+        <Label fx:id="errorLabel" text="" textFill="RED" visible="false" />
+        
+        <TextField fx:id="usernameField" promptText="%username" prefWidth="250" />
+        
+        <PasswordField fx:id="passwordField" promptText="%password" prefWidth="250" />
+        
+        <Button text="%login" onAction="#handleLogin" styleClass="button" prefWidth="250" />
+    </VBox>
+    </VBox>
+</StackPane>

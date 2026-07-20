@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sugarcane.erp.controller.TransportController" styleClass="root">
+    
+    <top>
+        <HBox alignment="CENTER_LEFT" styleClass="card">
+            <padding><Insets top="10" right="20" bottom="10" left="20"/></padding>
+            <Label fx:id="titleLabel" text="%transport.title" styleClass="header-label" />
+        </HBox>
+    </top>
+
+    <center>
+        <SplitPane dividerPositions="0.35">
+            <!-- Left Side: Form -->
+            <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+                <VBox spacing="15.0" styleClass="card">
+                    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                    
+                    <Label text="%transport.name" styleClass="label" />
+                    <TextField fx:id="transportNameField" promptText="%transport.name" />
+                    
+                    <Label text="%transport.vehicleNo" styleClass="label" />
+                    <TextField fx:id="vehicleNoField" promptText="%transport.vehicleNo" />
+                    
+                    <Label text="%transport.driverName" styleClass="label" />
+                    <TextField fx:id="driverNameField" promptText="%transport.driverName" />
+                    
+                    <Label text="%transport.driverMobile" styleClass="label" />
+                    <TextField fx:id="driverMobileField" promptText="%transport.driverMobile" />
+                    
+                    <HBox spacing="10" alignment="CENTER" style="-fx-margin-top: 15px;">
+                        <Button fx:id="btnSave" text="%btn.save" onAction="#handleSave" styleClass="button" />
+                        <Button fx:id="btnUpdate" text="%btn.update" onAction="#handleUpdate" styleClass="button" />
+                        <Button fx:id="btnDelete" text="%btn.delete" onAction="#handleDelete" style="-fx-background-color: -error-color; -fx-text-fill: white;" />
+                        <Button fx:id="btnClear" text="%btn.clear" onAction="#handleClear" styleClass="button-secondary" />
+                    </HBox>
+                </VBox>
+            </ScrollPane>
+            
+            <!-- Right Side: Table -->
+            <VBox styleClass="card">
+                <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <TextField promptText="Search Transports..." HBox.hgrow="ALWAYS" />
+                    <Button text="Search" styleClass="button-secondary" />
+                </HBox>
+                
+                <TableView fx:id="transportTable" VBox.vgrow="ALWAYS" style="-fx-margin-top: 10px;">
+                    <columns>
+                        <TableColumn fx:id="colTransportName" text="%transport.name" prefWidth="150" />
+                        <TableColumn fx:id="colVehicleNo" text="%transport.vehicleNo" prefWidth="120" />
+                        <TableColumn fx:id="colDriverName" text="%transport.driverName" prefWidth="150" />
+                        <TableColumn fx:id="colDriverMobile" text="%transport.driverMobile" prefWidth="120" />
+                        <TableColumn fx:id="colStatus" text="%field.status" prefWidth="100" />
+                    </columns>
+                </TableView>
+            </VBox>
+        </SplitPane>
+    </center>
+    
+</BorderPane>

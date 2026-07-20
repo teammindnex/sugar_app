@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sugarcane.erp.controller.WorkerDailyEntryController" styleClass="root">
+    
+    <top>
+        <HBox alignment="CENTER_LEFT" styleClass="card">
+            <padding><Insets top="10" right="20" bottom="10" left="20"/></padding>
+            <Label fx:id="titleLabel" text="%workerEntry.title" styleClass="header-label" />
+        </HBox>
+    </top>
+
+    <center>
+        <SplitPane dividerPositions="0.45">
+            <!-- Left Side: Form -->
+            <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+                <VBox spacing="10.0" styleClass="card">
+                    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                    
+                    <Label text="%menu.workers" styleClass="label" />
+                    <ComboBox fx:id="workerComboBox" maxWidth="Infinity" promptText="Select Worker" />
+                    
+                    <HBox spacing="10">
+                        <VBox HBox.hgrow="ALWAYS">
+                            <Label text="%field.date" styleClass="label" />
+                            <DatePicker fx:id="entryDatePicker" maxWidth="Infinity" />
+                        </VBox>
+                        <VBox HBox.hgrow="ALWAYS">
+                            <Label text="%workerEntry.attendance" styleClass="label" />
+                            <ComboBox fx:id="attendanceComboBox" maxWidth="Infinity" />
+                        </VBox>
+                    </HBox>
+                    
+                    <HBox spacing="10">
+                        <VBox HBox.hgrow="ALWAYS">
+                            <Label text="%workerEntry.bundles" styleClass="label" />
+                            <TextField fx:id="bundlesField" text="0" />
+                        </VBox>
+                        <VBox HBox.hgrow="ALWAYS">
+                            <Label text="Rate / Bundle" styleClass="label" />
+                            <TextField fx:id="rateField" text="0.0" />
+                        </VBox>
+                    </HBox>
+                    
+                    <Label text="Total Salary" styleClass="label" style="-fx-font-weight: bold;" />
+                    <TextField fx:id="totalSalaryField" text="0.0" editable="false" style="-fx-font-weight: bold; -fx-background-color: #e0f2f1;" />
+                    
+                    <Separator style="-fx-padding: 5px;" />
+                    
+                    <Label text="Additions" styleClass="label" style="-fx-font-weight: bold;" />
+                    <HBox spacing="10">
+                        <VBox HBox.hgrow="ALWAYS">
+                            <Label text="Bonus" styleClass="label" />
+                            <TextField fx:id="bonusField" text="0.0" />
+                        </VBox>
+                    </HBox>
+                    
+                    <Label text="Deductions &amp; Expenses" styleClass="label" style="-fx-font-weight: bold;" />
+                    <HBox spacing="10">
+                        <VBox HBox.hgrow="ALWAYS">
+                            <Label text="Advance" styleClass="label" />
+                            <TextField fx:id="advanceField" text="0.0" />
+                        </VBox>
+                        <VBox HBox.hgrow="ALWAYS">
+                            <Label text="Penalty" styleClass="label" />
+                            <TextField fx:id="penaltyField" text="0.0" />
+                        </VBox>
+                    </HBox>
+                    <HBox spacing="10">
+                        <VBox HBox.hgrow="ALWAYS">
+                            <Label text="Tea Expense" styleClass="label" />
+                            <TextField fx:id="teaExpenseField" text="0.0" />
+                        </VBox>
+                        <VBox HBox.hgrow="ALWAYS">
+                            <Label text="Food Expense" styleClass="label" />
+                            <TextField fx:id="foodExpenseField" text="0.0" />
+                        </VBox>
+                    </HBox>
+                    <Label text="Other Expense" styleClass="label" />
+                    <TextField fx:id="otherExpenseField" text="0.0" />
+                    
+                    <Separator style="-fx-padding: 5px;" />
+                    
+                    <Label text="%workerEntry.netSalary" styleClass="label" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: -primary-color;" />
+                    <TextField fx:id="netSalaryField" text="0.0" editable="false" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-background-color: #e8f5e9;" />
+                    
+                    <HBox spacing="10" alignment="CENTER" style="-fx-margin-top: 10px;">
+                        <Button fx:id="btnSave" text="%btn.save" onAction="#handleSave" styleClass="button" />
+                        <Button fx:id="btnDelete" text="%btn.delete" onAction="#handleDelete" style="-fx-background-color: -error-color; -fx-text-fill: white;" />
+                        <Button fx:id="btnClear" text="%btn.clear" onAction="#handleClear" styleClass="button-secondary" />
+                    </HBox>
+                </VBox>
+            </ScrollPane>
+            
+            <!-- Right Side: Table -->
+            <VBox styleClass="card">
+                <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                
+                <Label text="Recent Entries" styleClass="sub-header-label" style="-fx-padding: 0 0 10 0;" />
+                
+                <TableView fx:id="entryTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colDate" text="%field.date" prefWidth="90" />
+                        <TableColumn fx:id="colWorker" text="%menu.workers" prefWidth="120" />
+                        <TableColumn fx:id="colAttendance" text="%workerEntry.attendance" prefWidth="90" />
+                        <TableColumn fx:id="colBundles" text="%workerEntry.bundles" prefWidth="70" />
+                        <TableColumn fx:id="colNetSalary" text="%workerEntry.netSalary" prefWidth="90" />
+                    </columns>
+                </TableView>
+            </VBox>
+        </SplitPane>
+    </center>
+    
+</BorderPane>

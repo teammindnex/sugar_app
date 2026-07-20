@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sugarcane.erp.controller.SaleController" styleClass="root">
+    
+    <top>
+        <HBox alignment="CENTER_LEFT" styleClass="card">
+            <padding><Insets top="10" right="20" bottom="10" left="20"/></padding>
+            <Label fx:id="titleLabel" text="%sale.title" styleClass="header-label" />
+        </HBox>
+    </top>
+
+    <center>
+        <SplitPane dividerPositions="0.40">
+            <!-- Left Side: Form -->
+            <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+                <VBox spacing="10.0" styleClass="card">
+                    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                    
+                    <Label text="%menu.customers" styleClass="label" />
+                    <ComboBox fx:id="customerComboBox" maxWidth="Infinity" promptText="Select Customer" />
+                    
+                    <HBox spacing="10">
+                        <VBox HBox.hgrow="ALWAYS">
+                            <Label text="%field.date" styleClass="label" />
+                            <DatePicker fx:id="saleDatePicker" maxWidth="Infinity" />
+                        </VBox>
+                        <VBox HBox.hgrow="ALWAYS">
+                            <Label text="Cane Type" styleClass="label" />
+                            <TextField fx:id="caneTypeField" />
+                        </VBox>
+                    </HBox>
+                    
+                    <Label text="%transport.vehicleNo" styleClass="label" />
+                    <TextField fx:id="vehicleNoField" />
+                    
+                    <HBox spacing="10">
+                        <VBox HBox.hgrow="ALWAYS">
+                            <Label text="%purchase.weight" styleClass="label" />
+                            <TextField fx:id="weightField" text="0.0" />
+                        </VBox>
+                        <VBox HBox.hgrow="ALWAYS">
+                            <Label text="%purchase.rate" styleClass="label" />
+                            <TextField fx:id="rateField" text="0.0" />
+                        </VBox>
+                    </HBox>
+                    
+                    <Label text="Total Amount" styleClass="label" style="-fx-font-weight: bold;" />
+                    <TextField fx:id="totalAmountField" text="0.0" editable="false" style="-fx-font-weight: bold; -fx-background-color: #e0f2f1;" />
+                    
+                    <Separator style="-fx-padding: 5px;" />
+                    
+                    <Label text="Received Amount" styleClass="label" />
+                    <TextField fx:id="receivedAmountField" text="0.0" />
+                    
+                    <Label text="Balance Due (Net Amount)" styleClass="label" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: -error-color;" />
+                    <TextField fx:id="netAmountField" text="0.0" editable="false" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-background-color: #ffebee;" />
+                    
+                    <Label text="%field.remarks" styleClass="label" />
+                    <TextArea fx:id="remarksArea" prefRowCount="2" />
+                    
+                    <HBox spacing="10" alignment="CENTER" style="-fx-margin-top: 10px;">
+                        <Button fx:id="btnSave" text="%btn.save" onAction="#handleSave" styleClass="button" />
+                        <Button fx:id="btnDelete" text="%btn.delete" onAction="#handleDelete" style="-fx-background-color: -error-color; -fx-text-fill: white;" />
+                        <Button fx:id="btnClear" text="%btn.clear" onAction="#handleClear" styleClass="button-secondary" />
+                    </HBox>
+                </VBox>
+            </ScrollPane>
+            
+            <!-- Right Side: Table -->
+            <VBox styleClass="card">
+                <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                
+                <Label text="Recent Sales" styleClass="sub-header-label" style="-fx-padding: 0 0 10 0;" />
+                
+                <TableView fx:id="saleTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colDate" text="%field.date" prefWidth="100" />
+                        <TableColumn fx:id="colCustomer" text="%menu.customers" prefWidth="120" />
+                        <TableColumn fx:id="colWeight" text="%purchase.weight" prefWidth="80" />
+                        <TableColumn fx:id="colRate" text="%purchase.rate" prefWidth="80" />
+                        <TableColumn fx:id="colNet" text="%purchase.netAmount" prefWidth="100" />
+                    </columns>
+                </TableView>
+            </VBox>
+        </SplitPane>
+    </center>
+    
+</BorderPane>

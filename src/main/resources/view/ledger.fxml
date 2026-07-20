@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sugarcane.erp.controller.LedgerController" styleClass="root">
+    
+    <top>
+        <HBox alignment="CENTER_LEFT" styleClass="card">
+            <padding><Insets top="10" right="20" bottom="10" left="20"/></padding>
+            <Label text="%menu.reports" styleClass="header-label" />
+        </HBox>
+    </top>
+
+    <center>
+        <TabPane tabClosingPolicy="UNAVAILABLE" styleClass="card">
+            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+            
+            <!-- Farmer Khatavani Tab -->
+            <Tab text="Farmer Khatavani">
+                <VBox spacing="10">
+                    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <Label text="Select Farmer:" styleClass="label" />
+                        <ComboBox fx:id="farmerComboBox" promptText="Select..." prefWidth="250" />
+                        <HBox HBox.hgrow="ALWAYS" />
+                        <Button fx:id="btnExportFarmer" text="Export to Excel" onAction="#handleExportFarmer" styleClass="button" style="-fx-background-color: #2e7d32;" />
+                    </HBox>
+                    <TableView fx:id="farmerTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colFDate" text="Date" prefWidth="120" />
+                            <TableColumn fx:id="colFParticulars" text="Particulars" prefWidth="250" />
+                            <TableColumn fx:id="colFDebit" text="Debit (Rs)" prefWidth="120" />
+                            <TableColumn fx:id="colFCredit" text="Credit (Rs)" prefWidth="120" />
+                            <TableColumn fx:id="colFBalance" text="Balance (Rs)" prefWidth="150" />
+                        </columns>
+                    </TableView>
+                </VBox>
+            </Tab>
+            
+            <!-- Customer Khatavani Tab -->
+            <Tab text="Customer Khatavani">
+                <VBox spacing="10">
+                    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <Label text="Select Customer:" styleClass="label" />
+                        <ComboBox fx:id="customerComboBox" promptText="Select..." prefWidth="250" />
+                        <HBox HBox.hgrow="ALWAYS" />
+                        <Button fx:id="btnExportCustomer" text="Export to Excel" onAction="#handleExportCustomer" styleClass="button" style="-fx-background-color: #2e7d32;" />
+                    </HBox>
+                    <TableView fx:id="customerTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colCDate" text="Date" prefWidth="120" />
+                            <TableColumn fx:id="colCParticulars" text="Particulars" prefWidth="250" />
+                            <TableColumn fx:id="colCDebit" text="Debit (Rs)" prefWidth="120" />
+                            <TableColumn fx:id="colCCredit" text="Credit (Rs)" prefWidth="120" />
+                            <TableColumn fx:id="colCBalance" text="Balance (Rs)" prefWidth="150" />
+                        </columns>
+                    </TableView>
+                </VBox>
+            </Tab>
+        </TabPane>
+    </center>
+    
+</BorderPane>
