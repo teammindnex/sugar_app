@@ -112,7 +112,7 @@ public class PdfGeneratorService {
         g2d.drawRect(margin, y, tableWidth, 1200);
 
         g2d.setFont(boldFont.deriveFont(40f));
-        String[] headers = { "अ.क्र.", "मालाचा प्रकार", "भारा", "दर", "रक्कम" };
+        String[] headers = { "अ.क्र.", "मालाचा प्रकार", "भारा/वजन", "दर", "रक्कम" };
         for(int i=0; i<headers.length; i++) {
             drawCenteredStringInRect(g2d, headers[i], colEdges[i], y + 60, colWidths[i]);
         }
@@ -130,8 +130,13 @@ public class PdfGeneratorService {
         g2d.setColor(Color.BLACK); // Items in black
         for (CustomerBillItem item : items) {
             drawCenteredStringInRect(g2d, String.valueOf(item.getSrNo()), colEdges[0], rowY, colWidths[0]);
-            drawMixedText(g2d, item.getItemType(), colEdges[1] + 30, rowY);
-            drawCenteredStringInRect(g2d, item.getBhara(), colEdges[2], rowY, colWidths[2]);
+            
+            // Append supply type to item type (e.g., ऊस (भारा))
+            String typeText = item.getItemType() + " (" + item.getSupplyType() + ")";
+            drawMixedText(g2d, typeText, colEdges[1] + 30, rowY);
+            
+            String qtyText = String.format("%.2f", item.getQuantity());
+            drawCenteredStringInRect(g2d, qtyText, colEdges[2], rowY, colWidths[2]);
             drawCenteredStringInRect(g2d, String.format("%.2f", item.getRate()), colEdges[3], rowY, colWidths[3]);
             drawRightAlignedTextInRect(g2d, String.format("%.2f", item.getAmount()), colEdges[4], rowY, colWidths[4] - 30);
             rowY += 80;

@@ -24,16 +24,16 @@ public class CustomerController {
     
     // Product Entry
     @FXML private TextField itemTypeField;
-    @FXML private TextField bharaField;
-    @FXML private TextField weightField;
+    @FXML private ComboBox<String> supplyTypeCombo;
+    @FXML private TextField quantityField;
     @FXML private TextField rateField;
     
     // Item Table
     @FXML private TableView<CustomerBillItem> itemTable;
     @FXML private TableColumn<CustomerBillItem, String> colSrNo;
     @FXML private TableColumn<CustomerBillItem, String> colItemType;
-    @FXML private TableColumn<CustomerBillItem, String> colBhara;
-    @FXML private TableColumn<CustomerBillItem, String> colWeight;
+    @FXML private TableColumn<CustomerBillItem, String> colSupplyType;
+    @FXML private TableColumn<CustomerBillItem, String> colQuantity;
     @FXML private TableColumn<CustomerBillItem, String> colRate;
     @FXML private TableColumn<CustomerBillItem, String> colAmount;
     
@@ -61,24 +61,24 @@ public class CustomerController {
     public static class CustomerBillItem {
         private int srNo;
         private String itemType;
-        private String bhara;
-        private double weight;
+        private String supplyType;
+        private double quantity;
         private double rate;
         private double amount;
 
-        public CustomerBillItem(int srNo, String itemType, String bhara, double weight, double rate, double amount) {
+        public CustomerBillItem(int srNo, String itemType, String supplyType, double quantity, double rate, double amount) {
             this.srNo = srNo;
             this.itemType = itemType;
-            this.bhara = bhara;
-            this.weight = weight;
+            this.supplyType = supplyType;
+            this.quantity = quantity;
             this.rate = rate;
             this.amount = amount;
         }
 
         public int getSrNo() { return srNo; }
         public String getItemType() { return itemType; }
-        public String getBhara() { return bhara; }
-        public double getWeight() { return weight; }
+        public String getSupplyType() { return supplyType; }
+        public double getQuantity() { return quantity; }
         public double getRate() { return rate; }
         public double getAmount() { return amount; }
     }
@@ -91,11 +91,14 @@ public class CustomerController {
         // Setup Item Table Columns
         colSrNo.setCellValueFactory(new PropertyValueFactory<>("srNo"));
         colItemType.setCellValueFactory(new PropertyValueFactory<>("itemType"));
-        colBhara.setCellValueFactory(new PropertyValueFactory<>("bhara"));
-        colWeight.setCellValueFactory(new PropertyValueFactory<>("weight"));
+        colSupplyType.setCellValueFactory(new PropertyValueFactory<>("supplyType"));
+        colQuantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
         colRate.setCellValueFactory(new PropertyValueFactory<>("rate"));
         colAmount.setCellValueFactory(new PropertyValueFactory<>("amount"));
         itemTable.setItems(billItemsList);
+        
+        supplyTypeCombo.setItems(FXCollections.observableArrayList("भारा", "वजन"));
+        supplyTypeCombo.setValue("भारा");
         
         // Setup History Table Columns
         colHistName.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -125,28 +128,28 @@ public class CustomerController {
 
     @FXML
     private void handleAddItem() {
-        if (itemTypeField.getText().isEmpty() || weightField.getText().isEmpty() || rateField.getText().isEmpty()) {
-            showAlert("कृपया मालाचा प्रकार, वजन आणि भाव प्रविष्ट करा!");
+        if (itemTypeField.getText().isEmpty() || rateField.getText().isEmpty() || quantityField.getText().isEmpty()) {
+            showAlert("कृपया मालाचा प्रकार, संख्या/वजन आणि दर प्रविष्ट करा!");
             return;
         }
         
         try {
             String itemType = itemTypeField.getText();
-            String bhara = bharaField.getText();
-            double weight = Double.parseDouble(weightField.getText());
+            String supplyType = supplyTypeCombo.getValue();
+            double quantity = Double.parseDouble(quantityField.getText());
             double rate = Double.parseDouble(rateField.getText());
-            double amount = weight * rate; // basic calculation
+            double amount = quantity * rate;
+            
             int srNo = billItemsList.size() + 1;
             
-            CustomerBillItem item = new CustomerBillItem(srNo, itemType, bhara, weight, rate, amount);
+            CustomerBillItem item = new CustomerBillItem(srNo, itemType, supplyType, quantity, rate, amount);
             billItemsList.add(item);
             
             updateTotals();
             
             // Clear fields
             itemTypeField.clear();
-            bharaField.clear();
-            weightField.clear();
+            quantityField.clear();
             rateField.clear();
             
         } catch (NumberFormatException e) {

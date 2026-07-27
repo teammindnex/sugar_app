@@ -53,13 +53,13 @@
                                     </VBox>
                                     
                                     <VBox spacing="5">
-                                        <Label text="भारा"/>
-                                        <TextField fx:id="bharaField" promptText="भारा" prefWidth="80"/>
+                                        <Label text="पुरवठा प्रकार"/>
+                                        <ComboBox fx:id="supplyTypeCombo" prefWidth="100"/>
                                     </VBox>
                                     
                                     <VBox spacing="5">
-                                        <Label text="वजन"/>
-                                        <TextField fx:id="weightField" promptText="वजन" prefWidth="100"/>
+                                        <Label text="संख्या/वजन"/>
+                                        <TextField fx:id="quantityField" promptText="संख्या/वजन" prefWidth="100"/>
                                     </VBox>
                                     
                                     <VBox spacing="5">
@@ -75,9 +75,9 @@
                             <TableView fx:id="itemTable" VBox.vgrow="ALWAYS">
                                 <columns>
                                     <TableColumn fx:id="colSrNo" text="अ.क्र." prefWidth="50"/>
-                                    <TableColumn fx:id="colItemType" text="मालाचा प्रकार" prefWidth="200"/>
-                                    <TableColumn fx:id="colBhara" text="भारा" prefWidth="100"/>
-                                    <TableColumn fx:id="colWeight" text="वजन" prefWidth="150"/>
+                                    <TableColumn fx:id="colItemType" text="मालाचा प्रकार" prefWidth="180"/>
+                                    <TableColumn fx:id="colSupplyType" text="प्रकार" prefWidth="80"/>
+                                    <TableColumn fx:id="colQuantity" text="संख्या/वजन" prefWidth="120"/>
                                     <TableColumn fx:id="colRate" text="दर" prefWidth="150"/>
                                     <TableColumn fx:id="colAmount" text="रक्कम" prefWidth="200"/>
                                 </columns>
