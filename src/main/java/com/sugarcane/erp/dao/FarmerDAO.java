@@ -9,13 +9,13 @@ import java.util.List;
 
 public class FarmerDAO {
 
-    public void addFarmer(Farmer farmer) throws SQLException {
+    public int addFarmer(Farmer farmer) throws SQLException {
         String sql = "INSERT INTO Farmers (name, mobile, village, taluka, district, address, " +
                      "aadhar_number, bank_details, opening_balance, remarks, status) " +
                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                      
         try (Connection conn = DatabaseManager.getInstance().getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             
             pstmt.setString(1, farmer.getName());
             pstmt.setString(2, farmer.getMobile());
@@ -30,6 +30,14 @@ public class FarmerDAO {
             pstmt.setString(11, farmer.getStatus());
             
             pstmt.executeUpdate();
+            
+            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1);
+                } else {
+                    throw new SQLException("Creating farmer failed, no ID obtained.");
+                }
+            }
         }
     }
 

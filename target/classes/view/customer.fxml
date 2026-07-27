@@ -145,7 +145,7 @@
                             <Region HBox.hgrow="ALWAYS" />
                             
                             <Button text="Excel" style="-fx-background-color: #22c55e; -fx-text-fill: white;" onAction="#handleExportExcel" />
-                            <Button text="Khatavani" style="-fx-background-color: #64748b; -fx-text-fill: white;" onAction="#handleOpenLedger" />
+                            <Button text="खतावणी" style="-fx-background-color: #64748b; -fx-text-fill: white;" onAction="#handleOpenLedger" />
                             <Button text="Payment करा" style="-fx-background-color: #a855f7; -fx-text-fill: white;" onAction="#handlePayment" />
                             <Button text="हिशोब क्लोज करा" style="-fx-background-color: #f59e0b; -fx-text-fill: white;" onAction="#handleCloseAccount" />
                             <Button text="नोंद काढा" style="-fx-background-color: #ef4444; -fx-text-fill: white;" onAction="#handleDeleteRecord" />

@@ -265,12 +265,12 @@ public class CustomerController {
             javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/view/ledger.fxml"));
             javafx.scene.Parent root = loader.load();
             javafx.stage.Stage stage = new javafx.stage.Stage();
-            stage.setTitle("Khatavani");
+            stage.setTitle("खतावणी");
             stage.setScene(new javafx.scene.Scene(root, 1000, 700));
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("Failed to open Khatavani: " + e.getMessage());
+            showAlert("खतावणी उघडण्यात त्रुटी: " + e.getMessage());
         }
     }
 

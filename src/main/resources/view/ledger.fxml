@@ -18,7 +18,7 @@
             <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
             
             <!-- Farmer Khatavani Tab -->
-            <Tab text="Farmer Khatavani">
+            <Tab text="शेतकरी खतावणी">
                 <VBox spacing="10">
                     <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
                     <HBox spacing="15" alignment="CENTER_LEFT">
@@ -40,7 +40,7 @@
             </Tab>
             
             <!-- Customer Khatavani Tab -->
-            <Tab text="Customer Khatavani">
+            <Tab text="ग्राहक खतावणी">
                 <VBox spacing="10">
                     <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
                     <HBox spacing="15" alignment="CENTER_LEFT">

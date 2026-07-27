@@ -14,8 +14,8 @@ public class FarmerService {
         this.farmerDAO = new FarmerDAO();
     }
 
-    public void addFarmer(Farmer farmer) throws SQLException {
-        farmerDAO.addFarmer(farmer);
+    public int addFarmer(Farmer farmer) throws SQLException {
+        return farmerDAO.addFarmer(farmer);
     }
 
     public List<Farmer> getAllFarmers() throws SQLException {

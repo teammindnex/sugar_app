@@ -15,6 +15,7 @@ C:\Users\sif-\Desktop\All projects\SugarCane Supplier\src\main\java\com\sugarcan
 C:\Users\sif-\Desktop\All projects\SugarCane Supplier\src\main\java\com\sugarcane\erp\dao\DashboardDAO.java
 C:\Users\sif-\Desktop\All projects\SugarCane Supplier\src\main\java\com\sugarcane\erp\dao\ExpenseDAO.java
 C:\Users\sif-\Desktop\All projects\SugarCane Supplier\src\main\java\com\sugarcane\erp\dao\FarmerDAO.java
+C:\Users\sif-\Desktop\All projects\SugarCane Supplier\src\main\java\com\sugarcane\erp\dao\FarmerPaymentDAO.java
 C:\Users\sif-\Desktop\All projects\SugarCane Supplier\src\main\java\com\sugarcane\erp\dao\PurchaseDAO.java
 C:\Users\sif-\Desktop\All projects\SugarCane Supplier\src\main\java\com\sugarcane\erp\dao\SaleDAO.java
 C:\Users\sif-\Desktop\All projects\SugarCane Supplier\src\main\java\com\sugarcane\erp\dao\SettingDAO.java
@@ -29,6 +30,7 @@ C:\Users\sif-\Desktop\All projects\SugarCane Supplier\src\main\java\com\sugarcan
 C:\Users\sif-\Desktop\All projects\SugarCane Supplier\src\main\java\com\sugarcane\erp\model\DashboardMetrics.java
 C:\Users\sif-\Desktop\All projects\SugarCane Supplier\src\main\java\com\sugarcane\erp\model\Expense.java
 C:\Users\sif-\Desktop\All projects\SugarCane Supplier\src\main\java\com\sugarcane\erp\model\Farmer.java
+C:\Users\sif-\Desktop\All projects\SugarCane Supplier\src\main\java\com\sugarcane\erp\model\FarmerPayment.java
 C:\Users\sif-\Desktop\All projects\SugarCane Supplier\src\main\java\com\sugarcane\erp\model\LedgerEntry.java
 C:\Users\sif-\Desktop\All projects\SugarCane Supplier\src\main\java\com\sugarcane\erp\model\Purchase.java
 C:\Users\sif-\Desktop\All projects\SugarCane Supplier\src\main\java\com\sugarcane\erp\model\Sale.java

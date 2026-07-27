@@ -34,11 +34,7 @@
                                     <Label text="बिल नं:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
                                     <TextField fx:id="billNoField" promptText="FRM-2026-0042" disable="true" prefWidth="150" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
                                     
-                                    <Label text="ट्रान्सपोर्ट:" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
-                                    <TextField fx:id="transportField" prefWidth="150" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
-                                    
-                                    <Label text="गाडी नं:" GridPane.columnIndex="4" GridPane.rowIndex="1"/>
-                                    <TextField fx:id="vehicleNoField" promptText="गाडी नं" prefWidth="150" GridPane.columnIndex="5" GridPane.rowIndex="1"/>
+                                    <Button text="वजन तपशील" onAction="#handleTransportWeightDetails" style="-fx-background-color: #8b5cf6; -fx-text-fill: white;" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
                                 </GridPane>
                             </TitledPane>
                             
@@ -53,8 +49,8 @@
                                     </VBox>
                                     
                                     <VBox spacing="5">
-                                        <Label text="वजन (किलो)"/>
-                                        <TextField fx:id="weightField" promptText="वजन (किलो)" prefWidth="100"/>
+                                        <Label text="वजन (टन)"/>
+                                        <TextField fx:id="weightField" promptText="वजन (टन)" prefWidth="100"/>
                                     </VBox>
                                     
                                     <VBox spacing="5">
@@ -133,7 +129,7 @@
                             <Region HBox.hgrow="ALWAYS" />
                             
                             <Button text="Excel" style="-fx-background-color: #22c55e; -fx-text-fill: white;" onAction="#handleExportExcel" />
-                            <Button text="Khatavani" style="-fx-background-color: #64748b; -fx-text-fill: white;" onAction="#handleOpenLedger" />
+                            <Button text="खतावणी" style="-fx-background-color: #64748b; -fx-text-fill: white;" onAction="#handleOpenLedger" />
                             <Button text="Payment करा" style="-fx-background-color: #a855f7; -fx-text-fill: white;" onAction="#handlePayment" />
                             <Button text="हिशोब क्लोज करा" style="-fx-background-color: #f59e0b; -fx-text-fill: white;" onAction="#handleCloseAccount" />
                             <Button text="नोंद काढा" style="-fx-background-color: #ef4444; -fx-text-fill: white;" onAction="#handleDeleteRecord" />
@@ -143,10 +139,9 @@
                             <columns>
                                 <TableColumn fx:id="colHistName" text="शेतकऱ्याचे नाव" prefWidth="200" />
                                 <TableColumn fx:id="colHistMobile" text="मोबाईल नंबर" prefWidth="150" />
-                                <TableColumn fx:id="colHistTotalSales" text="एकूण विक्री" prefWidth="150" />
-                                <TableColumn fx:id="colHistPayable" text="देणे बाकी" prefWidth="150" />
+                                <TableColumn fx:id="colHistCaneType" text="उसाचा प्रकार" prefWidth="150" />
+                                <TableColumn fx:id="colHistTotalWeight" text="एकूण वजन" prefWidth="150" />
                                 <TableColumn fx:id="colHistDate" text="खरेदीची तारीख" prefWidth="150" />
-                                <TableColumn fx:id="colHistItems" text="विक्री केलेले माल" prefWidth="200" />
                             </columns>
                         </TableView>
                     </VBox>
