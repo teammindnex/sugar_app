@@ -19,6 +19,7 @@ public class DashboardController {
 
     @FXML private BorderPane root;
     @FXML private StackPane contentArea;
+    @FXML private VBox sidebarVBox;
 
     @FXML private Label todayPurchaseLabel;
     @FXML private Label todaySalesLabel;
@@ -26,9 +27,13 @@ public class DashboardController {
     @FXML private Label todayCollectionLabel;
     @FXML private Label todayPaymentsLabel;
     @FXML private Label todayProfitLabel;
-    @FXML private Label totalFarmersLabel;
-    @FXML private Label totalCustomersLabel;
-    @FXML private Label totalVehiclesLabel;
+
+    @FXML private Label monthlyPurchaseWeightLabel;
+    @FXML private Label monthlySalesWeightLabel;
+    @FXML private Label yearlyPurchaseWeightLabel;
+    @FXML private Label yearlySalesWeightLabel;
+    @FXML private javafx.scene.control.ComboBox<String> sugarcaneMonthPicker;
+    private java.util.List<java.time.LocalDate> monthDates = new java.util.ArrayList<>();
 
     private Node homeNode;
     private com.sugarcane.erp.service.DashboardService dashboardService;
@@ -42,12 +47,25 @@ public class DashboardController {
             homeNode = contentArea.getChildren().get(0);
         }
         
+        java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("MMM yyyy");
+        for (int i = 0; i < 12; i++) {
+            java.time.LocalDate d = java.time.LocalDate.now().minusMonths(i);
+            monthDates.add(d);
+            sugarcaneMonthPicker.getItems().add(d.format(formatter));
+        }
+        sugarcaneMonthPicker.getSelectionModel().select(0);
+        
         loadDashboardStats();
     }
     
+    @FXML
     private void loadDashboardStats() {
         try {
-            com.sugarcane.erp.model.DashboardMetrics metrics = dashboardService.getMetrics();
+            java.time.LocalDate selectedDate = java.time.LocalDate.now();
+            if (sugarcaneMonthPicker != null && sugarcaneMonthPicker.getSelectionModel().getSelectedIndex() >= 0) {
+                selectedDate = monthDates.get(sugarcaneMonthPicker.getSelectionModel().getSelectedIndex());
+            }
+            com.sugarcane.erp.model.DashboardMetrics metrics = dashboardService.getMetrics(selectedDate);
             
             todayPurchaseLabel.setText(String.format("₹ %.2f", metrics.getTodayPurchase()));
             todaySalesLabel.setText(String.format("₹ %.2f", metrics.getTodaySales()));
@@ -58,17 +76,39 @@ public class DashboardController {
             double profit = metrics.getTodaySales() - metrics.getTodayPurchase() - metrics.getTodayExpenses();
             todayProfitLabel.setText(String.format("₹ %.2f", profit));
             
-            totalFarmersLabel.setText(String.valueOf(metrics.getTotalFarmers()));
-            totalCustomersLabel.setText(String.valueOf(metrics.getTotalCustomers()));
-            totalVehiclesLabel.setText(String.valueOf(metrics.getTotalVehicles()));
+            if (monthlyPurchaseWeightLabel != null) {
+                monthlyPurchaseWeightLabel.setText(String.format("%.2f टन", metrics.getMonthlyPurchaseWeight()));
+            }
+            if (monthlySalesWeightLabel != null) {
+                monthlySalesWeightLabel.setText(String.format("%.2f टन", metrics.getMonthlySalesWeight()));
+            }
+            if (yearlyPurchaseWeightLabel != null) {
+                yearlyPurchaseWeightLabel.setText(String.format("%.2f टन", metrics.getYearlyPurchaseWeight()));
+            }
+            if (yearlySalesWeightLabel != null) {
+                yearlySalesWeightLabel.setText(String.format("%.2f टन", metrics.getYearlySalesWeight()));
+            }
             
         } catch (java.sql.SQLException e) {
             e.printStackTrace();
         }
     }
 
+    private void setActiveButton(javafx.event.ActionEvent event) {
+        if (sidebarVBox == null || event == null) return;
+        for (Node node : sidebarVBox.getChildren()) {
+            if (node instanceof javafx.scene.control.Button) {
+                node.getStyleClass().remove("active");
+            }
+        }
+        if (event.getSource() instanceof javafx.scene.control.Button) {
+            ((javafx.scene.control.Button) event.getSource()).getStyleClass().add("active");
+        }
+    }
+
     @FXML
-    private void showDashboardHome() {
+    private void showDashboardHome(javafx.event.ActionEvent event) {
+        setActiveButton(event);
         contentArea.getChildren().clear();
         if (homeNode != null) {
             contentArea.getChildren().add(homeNode);
@@ -82,27 +122,38 @@ public class DashboardController {
     }
 
     @FXML
-    private void showFarmer() {
+    private void showFarmer(javafx.event.ActionEvent event) {
+        setActiveButton(event);
         loadView("/view/farmer.fxml");
     }
 
     @FXML
-    private void showCustomer() {
+    private void showCustomer(javafx.event.ActionEvent event) {
+        setActiveButton(event);
         loadView("/view/customer.fxml");
     }
 
     @FXML
-    private void showWorker() {
+    private void showWorker(javafx.event.ActionEvent event) {
+        setActiveButton(event);
         loadView("/view/worker.fxml");
     }
 
     @FXML
-    private void showTransport() {
+    private void showReports(javafx.event.ActionEvent event) {
+        setActiveButton(event);
+        loadView("/view/reports.fxml");
+    }
+
+    @FXML
+    private void showTransport(javafx.event.ActionEvent event) {
+        setActiveButton(event);
         loadView("/view/transport.fxml");
     }
 
     @FXML
-    private void showSettings() {
+    private void showSettings(javafx.event.ActionEvent event) {
+        setActiveButton(event);
         loadView("/view/settings.fxml");
     }
 

@@ -81,9 +81,12 @@ CREATE TABLE IF NOT EXISTS Transports (
 CREATE TABLE IF NOT EXISTS Sugarcane_Purchases (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     farmer_id INTEGER NOT NULL,
+    bill_no TEXT,
     purchase_date DATE NOT NULL,
     cane_type TEXT,
     vehicle_no TEXT,
+    empty_weight REAL DEFAULT 0.0,
+    loaded_weight REAL DEFAULT 0.0,
     weight REAL NOT NULL,
     rate_per_ton REAL NOT NULL,
     total_amount REAL NOT NULL,

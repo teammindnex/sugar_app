@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+
+<VBox spacing="20" styleClass="root" stylesheets="@../css/light-theme.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sugarcane.erp.controller.ReportController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Label text="अहवाल (Reports)" styleClass="header-label" style="-fx-font-size: 28px; -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.9), 10, 0.8, 0, 0);"/>
+
+    <VBox spacing="15" styleClass="card">
+        <padding>
+            <Insets top="15" right="15" bottom="15" left="15"/>
+        </padding>
+        
+        <FlowPane hgap="15" vgap="15" alignment="CENTER_LEFT">
+            <Label text="कालावधी (Period):" style="-fx-font-weight: bold;" minWidth="-Infinity"/>
+            <ComboBox fx:id="periodComboBox" promptText="निवडा (Select)" minWidth="-Infinity"/>
+            
+            <Label text="पासून (From):" style="-fx-font-weight: bold;" minWidth="-Infinity"/>
+            <DatePicker fx:id="startDatePicker" prefWidth="130" minWidth="-Infinity"/>
+            
+            <Label text="पर्यंत (To):" style="-fx-font-weight: bold;" minWidth="-Infinity"/>
+            <DatePicker fx:id="endDatePicker" prefWidth="130" minWidth="-Infinity"/>
+            
+            <Button text="शोधा (Search)" onAction="#loadReports" styleClass="primary-button" minWidth="-Infinity"/>
+        </FlowPane>
+        
+        <Separator/>
+        
+        <HBox spacing="15" alignment="CENTER_RIGHT">
+            <Button text="PDF डाउनलोड" onAction="#exportToPdf" styleClass="secondary-button" style="-fx-background-color: #dc2626; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" minWidth="-Infinity"/>
+            <Button text="Excel डाउनलोड" onAction="#exportToExcel" styleClass="secondary-button" style="-fx-background-color: #16a34a; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" minWidth="-Infinity"/>
+        </HBox>
+    </VBox>
+
+    <TableView fx:id="reportTable" VBox.vgrow="ALWAYS" styleClass="table-view">
+        <columns>
+            <TableColumn fx:id="colDate" text="तारीख (Date)" prefWidth="150">
+                <cellValueFactory><PropertyValueFactory property="reportDate"/></cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="colPurchaseWeight" text="खरेदी वजन (टन)" prefWidth="200">
+                <cellValueFactory><PropertyValueFactory property="totalPurchaseWeight"/></cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="colPurchaseAmount" text="खरेदी रक्कम (₹)" prefWidth="200">
+                <cellValueFactory><PropertyValueFactory property="totalPurchaseAmount"/></cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="colSaleWeight" text="विक्री वजन (टन)" prefWidth="200">
+                <cellValueFactory><PropertyValueFactory property="totalSaleWeight"/></cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="colSaleAmount" text="विक्री रक्कम (₹)" prefWidth="200">
+                <cellValueFactory><PropertyValueFactory property="totalSaleAmount"/></cellValueFactory>
+            </TableColumn>
+        </columns>
+    </TableView>
+
+</VBox>

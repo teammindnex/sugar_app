@@ -11,6 +11,10 @@ public class Farmer {
     private String aadharNumber;
     private String bankDetails;
     private double openingBalance;
+    private double currentBalance;
+    private double totalWeight;
+    private String lastCaneType;
+    private String lastDate;
     private String remarks;
     private String status;
 
@@ -62,6 +66,18 @@ public class Farmer {
 
     public double getOpeningBalance() { return openingBalance; }
     public void setOpeningBalance(double openingBalance) { this.openingBalance = openingBalance; }
+
+    public double getCurrentBalance() { return currentBalance; }
+    public void setCurrentBalance(double currentBalance) { this.currentBalance = currentBalance; }
+
+    public double getTotalWeight() { return totalWeight; }
+    public void setTotalWeight(double totalWeight) { this.totalWeight = totalWeight; }
+
+    public String getLastCaneType() { return lastCaneType; }
+    public void setLastCaneType(String lastCaneType) { this.lastCaneType = lastCaneType; }
+
+    public String getLastDate() { return lastDate; }
+    public void setLastDate(String lastDate) { this.lastDate = lastDate; }
 
     public String getRemarks() { return remarks; }
     public void setRemarks(String remarks) { this.remarks = remarks; }

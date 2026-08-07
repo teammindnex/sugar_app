@@ -7,30 +7,25 @@
 
 <BorderPane fx:id="root" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sugarcane.erp.controller.DashboardController" styleClass="root">
     <left>
-        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent;" hbarPolicy="NEVER">
+        <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent;" hbarPolicy="NEVER">
             <VBox spacing="20" styleClass="sidebar-container" prefWidth="320">
                 <padding><Insets top="20" right="15" bottom="20" left="15"/></padding>
             
             <!-- Branding Section (Stacked Vertically) -->
             <VBox alignment="TOP_CENTER" spacing="10">
-                <Label text="!! जय शारदा गजानन प्रसन्न !!" style="-fx-text-fill: red; -fx-font-weight: bold; -fx-font-size: 14px;"/>
+                <Label text="!! श्री गणेश प्रसन्न !! श्री भैरवनाथ प्रसन्न !!" style="-fx-text-fill: red; -fx-font-weight: bold; -fx-font-size: 14px;"/>
                 <Label text="श्री गणेश कृपा ऊस सप्लायर्स" styleClass="bill-title-maroon-sidebar"/>
                 
                 <VBox alignment="CENTER" styleClass="bill-subtitle-pill-sidebar">
                     <Label text="खास रसवंतीसाठी वापरल्या जाणाऱ्या खेडशिवापूर च्या ऊसाचे होलसेल विक्रेते" styleClass="bill-subtitle-text-sidebar" wrapText="true" textAlignment="CENTER" maxWidth="300"/>
                 </VBox>
                 
-                <HBox alignment="CENTER" spacing="10">
-                    <VBox spacing="2" alignment="CENTER">
-                        <Label text="पत्ता: ..." style="-fx-font-size: 11px;"/>
-                    </VBox>
-                </HBox>
-                
+
                 <Separator style="-fx-opacity: 0.3;" />
                 
                 <VBox spacing="2" alignment="TOP_CENTER">
-                    <Label text="प्रोप्रा. बाबासो कोंडे ९४४४३९४८५१ / ९५५२२३७१२३" style="-fx-font-size: 12px;"/>
-                    <Label text="प्रोप्रा. विराज कोंडे ९५५२२३७१२२ / ८९९९८७४८८६" style="-fx-font-size: 12px;"/>
+                    <Label text="प्रोप्रा. दादासो कोंडे 9763948154 / 7588237123" style="-fx-font-size: 13px; -fx-font-weight: 800;"/>
+                    <Label text="प्रोप्रा. विराज कोंडे 8999875886 / 7588237122" style="-fx-font-size: 13px; -fx-font-weight: 800;"/>
                 </VBox>
                 
             </VBox>
@@ -38,12 +33,13 @@
             <Separator style="-fx-opacity: 0.3;" />
 
             <!-- Navigation Section -->
-            <VBox spacing="5" alignment="CENTER">
+            <VBox fx:id="sidebarVBox" spacing="5" alignment="CENTER">
                 <Button text="डॅशबोर्ड (Dashboard)" onAction="#showDashboardHome" styleClass="nav-button-sidebar, active" maxWidth="Infinity" />
                 <Button text="शेतकरी (Farmer)" onAction="#showFarmer" styleClass="nav-button-sidebar" maxWidth="Infinity" />
                 <Button text="ग्राहक (Customer)" onAction="#showCustomer" styleClass="nav-button-sidebar" maxWidth="Infinity" />
                 <Button text="कामगार (Worker)" onAction="#showWorker" styleClass="nav-button-sidebar" maxWidth="Infinity" />
                 <Button text="ट्रान्सपोर्ट (Transport)" onAction="#showTransport" styleClass="nav-button-sidebar" maxWidth="Infinity" />
+                <Button text="अहवाल (Reports)" onAction="#showReports" styleClass="nav-button-sidebar" maxWidth="Infinity" />
                 <Button text="सेटिंग्स (Settings)" onAction="#showSettings" styleClass="nav-button-sidebar" maxWidth="Infinity" />
                 
                 <Region prefHeight="10.0" />
@@ -52,17 +48,13 @@
             
             <Region VBox.vgrow="ALWAYS" />
             
-            <VBox alignment="CENTER" spacing="5">
-                <Button text="English" onAction="#switchEnglish" styleClass="button-secondary" maxWidth="Infinity" />
-                <Button text="मराठी" onAction="#switchMarathi" styleClass="button-secondary" maxWidth="Infinity" />
-            </VBox>
             </VBox>
         </ScrollPane>
     </left>
 
     <center>
         <StackPane fx:id="contentArea">
-            <ScrollPane vbarPolicy="ALWAYS" fx:id="dashboardHome" fitToWidth="true" fitToHeight="true" style="-fx-background-color: transparent; -fx-background: #f1f5f9; -fx-border-color: transparent;">
+            <ScrollPane vbarPolicy="ALWAYS" fx:id="dashboardHome" fitToWidth="true" fitToHeight="true" style="-fx-background-color: transparent; -fx-border-color: transparent;">
                 <VBox spacing="30" styleClass="dashboard-container" alignment="TOP_CENTER">
                     <padding>
                         <Insets top="50" right="40" bottom="50" left="40"/>
@@ -111,33 +103,44 @@
                         </VBox>
                     </HBox>
                     
-                    <!-- We still keep other existing cards underneath the 3 large ones -->
                     <GridPane alignment="CENTER" hgap="20" vgap="20" style="-fx-padding: 20 0 0 0;">
                         
                         <VBox styleClass="card" minWidth="220" minHeight="120" alignment="CENTER" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                            <Label text="%today.collection" styleClass="sub-header-label" />
+                            <Label text="आजची वसुली (Today's Collection)" styleClass="sub-header-label" />
                             <Label fx:id="todayCollectionLabel" text="₹ 0.00" styleClass="header-label" style="-fx-text-fill: -primary-color; -fx-font-size: 28px; -fx-padding: 10 0 0 0;" />
                         </VBox>
                         <VBox styleClass="card" minWidth="220" minHeight="120" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                            <Label text="%today.payments" styleClass="sub-header-label" />
+                            <Label text="आजचे पेमेंट (Today's Payments)" styleClass="sub-header-label" />
                             <Label fx:id="todayPaymentsLabel" text="₹ 0.00" styleClass="header-label" style="-fx-text-fill: -error-color; -fx-font-size: 28px; -fx-padding: 10 0 0 0;" />
                         </VBox>
                         <VBox styleClass="card" minWidth="220" minHeight="120" alignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="0">
-                            <Label text="%today.expenses" styleClass="sub-header-label" />
+                            <Label text="आजचा खर्च (Today's Expenses)" styleClass="sub-header-label" />
                             <Label fx:id="todayExpensesLabel" text="₹ 0.00" styleClass="header-label" style="-fx-text-fill: -error-color; -fx-font-size: 28px; -fx-padding: 10 0 0 0;" />
                         </VBox>
-                        
-                        <VBox styleClass="card" minWidth="220" minHeight="120" alignment="CENTER" GridPane.columnIndex="0" GridPane.rowIndex="1">
-                            <Label text="%total.farmers" styleClass="sub-header-label" />
-                            <Label fx:id="totalFarmersLabel" text="0" styleClass="header-label" style="-fx-font-size: 28px; -fx-padding: 10 0 0 0;" />
+                    </GridPane>
+                    
+                    <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 20 0 0 0;">
+                        <Label text="ऊस व्यवहार (Sugarcane Quantity)" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.9), 10, 0.8, 0, 0);"/>
+                        <ComboBox fx:id="sugarcaneMonthPicker" promptText="महिना निवडा (Select Month)" onAction="#loadDashboardStats" style="-fx-font-size: 14px;" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Button text="अहवाल पहा (View Reports)" onAction="#showReports" styleClass="primary-button" style="-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-padding: 8 20;" />
+                    </HBox>
+                    <GridPane alignment="CENTER" hgap="20" vgap="20" style="-fx-padding: 10 0 0 0;">
+                        <VBox styleClass="card" minWidth="200" minHeight="100" alignment="CENTER" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <Label text="या महिन्याची खरेदी" styleClass="sub-header-label" />
+                            <Label fx:id="monthlyPurchaseWeightLabel" text="0.00 टन" styleClass="header-label" style="-fx-text-fill: #16a34a; -fx-font-size: 24px; -fx-padding: 5 0 0 0;" />
                         </VBox>
-                        <VBox styleClass="card" minWidth="220" minHeight="120" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                            <Label text="%total.customers" styleClass="sub-header-label" />
-                            <Label fx:id="totalCustomersLabel" text="0" styleClass="header-label" style="-fx-font-size: 28px; -fx-padding: 10 0 0 0;" />
+                        <VBox styleClass="card" minWidth="200" minHeight="100" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <Label text="या महिन्याची विक्री" styleClass="sub-header-label" />
+                            <Label fx:id="monthlySalesWeightLabel" text="0.00 टन" styleClass="header-label" style="-fx-text-fill: #2563eb; -fx-font-size: 24px; -fx-padding: 5 0 0 0;" />
                         </VBox>
-                        <VBox styleClass="card" minWidth="220" minHeight="120" alignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="1">
-                            <Label text="%total.vehicles" styleClass="sub-header-label" />
-                            <Label fx:id="totalVehiclesLabel" text="0" styleClass="header-label" style="-fx-font-size: 28px; -fx-padding: 10 0 0 0;" />
+                        <VBox styleClass="card" minWidth="200" minHeight="100" alignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                            <Label text="या वर्षाची खरेदी" styleClass="sub-header-label" />
+                            <Label fx:id="yearlyPurchaseWeightLabel" text="0.00 टन" styleClass="header-label" style="-fx-text-fill: #16a34a; -fx-font-size: 24px; -fx-padding: 5 0 0 0;" />
+                        </VBox>
+                        <VBox styleClass="card" minWidth="200" minHeight="100" alignment="CENTER" GridPane.columnIndex="3" GridPane.rowIndex="0">
+                            <Label text="या वर्षाची विक्री" styleClass="sub-header-label" />
+                            <Label fx:id="yearlySalesWeightLabel" text="0.00 टन" styleClass="header-label" style="-fx-text-fill: #2563eb; -fx-font-size: 24px; -fx-padding: 5 0 0 0;" />
                         </VBox>
                     </GridPane>
                     

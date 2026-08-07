@@ -8,12 +8,12 @@
     
     <center>
         <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color: transparent;">
-            <VBox spacing="20" style="-fx-background-color: white;">
+            <VBox spacing="20" style="-fx-background-color: transparent;">
                 <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
                 
                 <Label text="कामगार व्यवस्थापन" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
                 
-                <VBox spacing="15" style="-fx-background-color: #f8fafc; -fx-border-color: #e2e8f0; -fx-border-width: 1; -fx-border-radius: 4; -fx-background-radius: 4;">
+                <VBox spacing="15" style="-fx-background-color: rgba(255, 255, 255, 0.6); -fx-border-color: #e2e8f0; -fx-border-width: 1; -fx-border-radius: 4; -fx-background-radius: 4;">
                     <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
                     
                     <Label text="कामगार जोडा / दुरुस्त करा" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>

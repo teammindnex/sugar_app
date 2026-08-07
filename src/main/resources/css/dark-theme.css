@@ -12,6 +12,10 @@
 }
 
 .root {
+    -fx-background-image: url('../images/sugarcane_bg.png');
+    -fx-background-size: cover;
+    -fx-background-position: center center;
+    -fx-background-repeat: no-repeat;
     -fx-background-color: -bg-color;
     -fx-font-family: 'Nirmala UI', 'Mangal', 'Arial Unicode MS', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     -fx-font-size: 14px;
@@ -19,10 +23,36 @@
 
 /* Material Design Card */
 .card {
-    -fx-background-color: -surface-color;
+    -fx-background-color: rgba(30, 30, 30, 0.5); /* Lower opacity for better background visibility */
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 10, 0, 0, 2);
     -fx-background-radius: 8px;
     -fx-padding: 20px;
+}
+
+/* Make containers transparent so background shows through */
+.scroll-pane, .scroll-pane > .viewport, .tab-pane, .tab-pane .tab-header-area, .tab-pane .tab-header-background, .tab-pane .tab-content-area {
+    -fx-background-color: transparent;
+}
+
+/* Make TableView semi-transparent to show background */
+.table-view {
+    -fx-background-color: transparent;
+}
+.table-view .column-header-background, .table-view .column-header, .table-view .filler, .table-view .corner {
+    -fx-background-color: rgba(40, 40, 40, 0.85);
+}
+.table-row-cell {
+    -fx-background-color: rgba(30, 30, 30, 0.7);
+}
+.table-row-cell:odd {
+    -fx-background-color: rgba(45, 45, 45, 0.7);
+}
+.table-row-cell:empty {
+    -fx-background-color: transparent;
+}
+.table-row-cell:selected {
+    -fx-background-color: rgba(59, 130, 246, 0.8);
+    -fx-text-fill: white;
 }
 
 /* Buttons */

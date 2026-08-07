@@ -68,6 +68,7 @@ public class FarmerController {
     @FXML private TableColumn<Farmer, String> colHistCaneType;
     @FXML private TableColumn<Farmer, String> colHistTotalWeight;
     @FXML private TableColumn<Farmer, String> colHistDate;
+    @FXML private TableColumn<Farmer, String> colHistDeneBaki;
 
     private FarmerService farmerService;
     private PurchaseDAO purchaseDAO = new PurchaseDAO();
@@ -77,18 +78,24 @@ public class FarmerController {
 
     public static class BillItem {
         private String caneType;
+        private double emptyWeight;
+        private double loadedWeight;
         private double weight;
         private double rate;
         private double amount;
 
-        public BillItem(String caneType, double weight, double rate, double amount) {
+        public BillItem(String caneType, double emptyWeight, double loadedWeight, double weight, double rate, double amount) {
             this.caneType = caneType;
+            this.emptyWeight = emptyWeight;
+            this.loadedWeight = loadedWeight;
             this.weight = weight;
             this.rate = rate;
             this.amount = amount;
         }
 
         public String getCaneType() { return caneType; }
+        public double getEmptyWeight() { return emptyWeight; }
+        public double getLoadedWeight() { return loadedWeight; }
         public double getWeight() { return weight; }
         public double getRate() { return rate; }
         public double getAmount() { return amount; }
@@ -133,13 +140,57 @@ public class FarmerController {
         // Setup History Table Columns (Dummy mappings for now since model is just Farmer)
         colHistName.setCellValueFactory(new PropertyValueFactory<>("name"));
         colHistMobile.setCellValueFactory(new PropertyValueFactory<>("mobile"));
-        colHistCaneType.setCellValueFactory(cellData -> new SimpleStringProperty("-"));
-        colHistTotalWeight.setCellValueFactory(cellData -> new SimpleStringProperty("0.00"));
-        colHistDate.setCellValueFactory(cellData -> new SimpleStringProperty(LocalDate.now().toString()));
+        colHistCaneType.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getLastCaneType() != null ? cellData.getValue().getLastCaneType() : "-"));
+        colHistTotalWeight.setCellValueFactory(cellData -> new SimpleStringProperty(String.format("%.2f", cellData.getValue().getTotalWeight())));
+        colHistDate.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getLastDate() != null ? cellData.getValue().getLastDate() : "-"));
+        colHistDeneBaki.setCellValueFactory(cellData -> new SimpleStringProperty(String.format("%.2f", cellData.getValue().getCurrentBalance())));
         
-        // Attach Marathi Transliterator
-        com.sugarcane.erp.utils.MarathiTransliterator.attach(farmerNameField);
+        // Remove Marathi Transliterator as per user request to use normal English
+        // com.sugarcane.erp.utils.MarathiTransliterator.attach(farmerNameField);
         
+        // Setup Auto-suggestion for Farmer Name
+        ContextMenu autoSuggestMenu = new ContextMenu();
+        farmerNameField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null || newValue.trim().isEmpty()) {
+                autoSuggestMenu.hide();
+                return;
+            }
+            // Only show suggestions if the user is typing, not if they selected from the menu
+            if (autoSuggestMenu.isShowing() && autoSuggestMenu.getItems().stream().anyMatch(item -> item.getText().equals(newValue))) {
+                return;
+            }
+            
+            String filter = newValue.toLowerCase();
+            autoSuggestMenu.getItems().clear();
+            int count = 0;
+            for (Farmer f : farmerList) {
+                if (f.getName() != null && f.getName().toLowerCase().contains(filter)) {
+                    MenuItem item = new MenuItem(f.getName());
+                    item.setOnAction(e -> {
+                        farmerNameField.setText(f.getName());
+                        mobileField.setText(f.getMobile() != null ? f.getMobile() : "");
+                        autoSuggestMenu.hide();
+                    });
+                    autoSuggestMenu.getItems().add(item);
+                    count++;
+                    if (count >= 10) break; // Limit suggestions to 10
+                }
+            }
+            
+            if (!autoSuggestMenu.getItems().isEmpty()) {
+                if (!autoSuggestMenu.isShowing()) {
+                    autoSuggestMenu.show(farmerNameField, javafx.geometry.Side.BOTTOM, 0, 0);
+                }
+            } else {
+                autoSuggestMenu.hide();
+            }
+        });
+        
+        // Hide menu when focus is lost
+        farmerNameField.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal) autoSuggestMenu.hide();
+        });
+
         // Add listeners for total calculation
         previousBalanceField.textProperty().addListener((obs, oldV, newV) -> calculateFinalBalance());
         advanceField.textProperty().addListener((obs, oldV, newV) -> calculateFinalBalance());
@@ -148,15 +199,6 @@ public class FarmerController {
         mobileField.setTextFormatter(new TextFormatter<>(change -> {
             String text = change.getControlNewText();
             if (text.matches("\\d{0,10}")) {
-                return change;
-            }
-            return null;
-        }));
-        
-        // Restrict farmerNameField to no numbers
-        farmerNameField.setTextFormatter(new TextFormatter<>(change -> {
-            String text = change.getControlNewText();
-            if (text.matches("[^\\d]*")) {
                 return change;
             }
             return null;
@@ -190,15 +232,55 @@ public class FarmerController {
         });
 
         loadFarmers();
+        refreshBillNo();
+    }
+
+    private void refreshBillNo() {
+        try {
+            String nextBillNo = purchaseDAO.getNextBillNo();
+            billNoField.setText(nextBillNo);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void loadFarmers() {
         try {
             farmerList.clear();
-            farmerList.addAll(farmerService.getAllFarmers());
+            java.util.List<Farmer> allFarmers = farmerService.getAllFarmers();
+            com.sugarcane.erp.service.LedgerService ls = new com.sugarcane.erp.service.LedgerService();
+            for (Farmer f : allFarmers) {
+                java.util.List<com.sugarcane.erp.model.LedgerEntry> entries = ls.getFarmerLedger(f);
+                if (!entries.isEmpty()) {
+                    f.setCurrentBalance(entries.get(entries.size() - 1).getBalance());
+                } else {
+                    f.setCurrentBalance(f.getOpeningBalance());
+                }
+                
+                double totalW = 0.0;
+                String lastCane = "-";
+                String lastDate = "-";
+                
+                for (com.sugarcane.erp.model.LedgerEntry entry : entries) {
+                    if (entry.getWeight() > 0) {
+                        totalW += entry.getWeight();
+                        if (entry.getCaneType() != null && !entry.getCaneType().isEmpty()) {
+                            lastCane = entry.getCaneType();
+                        }
+                        if (entry.getDate() != null) {
+                            lastDate = entry.getDate().toString();
+                        }
+                    }
+                }
+                
+                f.setTotalWeight(totalW);
+                f.setLastCaneType(lastCane);
+                f.setLastDate(lastDate);
+            }
+            farmerList.addAll(allFarmers);
             farmerHistoryTable.setItems(farmerList);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -231,9 +313,11 @@ public class FarmerController {
             String caneType = caneTypeCombo.getValue();
             double weight = Double.parseDouble(weightField.getText());
             double rate = Double.parseDouble(rateField.getText());
-            double amount = weight * rate; // Example calculation (Total weight * Rate per Ton)
+            double amount = weight * rate;
+            double emptyW = emptyWeightState.trim().isEmpty() ? 0 : Double.parseDouble(emptyWeightState);
+            double loadedW = loadedWeightState.trim().isEmpty() ? 0 : Double.parseDouble(loadedWeightState);
             
-            BillItem item = new BillItem(caneType, weight, rate, amount);
+            BillItem item = new BillItem(caneType, emptyW, loadedW, weight, rate, amount);
             billItemsList.add(item);
             
             updateTotals();
@@ -242,6 +326,8 @@ public class FarmerController {
             caneTypeCombo.getSelectionModel().clearSelection();
             weightField.clear();
             rateField.clear();
+            emptyWeightState = "";
+            loadedWeightState = "";
             
         } catch (NumberFormatException e) {
             showAlert("कृपया वैध संख्या प्रविष्ट करा!");
@@ -290,6 +376,7 @@ public class FarmerController {
         previousBalanceField.setText("0.00");
         advanceField.setText("0.00");
         updateTotals();
+        refreshBillNo();
     }
 
     @FXML
@@ -332,6 +419,19 @@ public class FarmerController {
         Label photoLabel = new Label(photoPathState.isEmpty() ? "फोटो निवडला नाही" : new File(photoPathState).getName());
         
         final String[] photoPath = new String[]{photoPathState};
+        
+        Button viewPhotoButton = new Button("फोटो पहा (View Photo)");
+        viewPhotoButton.setVisible(!photoPathState.isEmpty());
+        viewPhotoButton.setOnAction(ev -> {
+            try {
+                if (photoPath[0] != null && !photoPath[0].isEmpty()) {
+                    java.awt.Desktop.getDesktop().open(new File(photoPath[0]));
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                showAlert("फोटो उघडता आला नाही: " + ex.getMessage());
+            }
+        });
 
         photoButton.setOnAction(e -> {
             FileChooser fileChooser = new FileChooser();
@@ -344,6 +444,7 @@ public class FarmerController {
             if (selectedFile != null) {
                 photoPath[0] = selectedFile.getAbsolutePath();
                 photoLabel.setText(selectedFile.getName());
+                viewPhotoButton.setVisible(true);
             }
         });
 
@@ -356,8 +457,13 @@ public class FarmerController {
         grid.add(new Label("भरलेल्या गाडीचे वजन (Loaded):"), 0, 3);
         grid.add(loadedWeight, 1, 3);
         grid.add(new Label("वजन पावती फोटो:"), 0, 4);
-        grid.add(photoButton, 1, 4);
-        grid.add(photoLabel, 2, 4);
+        
+        javafx.scene.layout.HBox photoBox = new javafx.scene.layout.HBox(10);
+        photoBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        photoBox.getChildren().addAll(photoButton, viewPhotoButton, photoLabel);
+        
+        grid.add(photoBox, 1, 4);
+        javafx.scene.layout.GridPane.setColumnSpan(photoBox, 2);
 
         dialog.getDialogPane().setContent(grid);
         
@@ -385,11 +491,17 @@ public class FarmerController {
                 try {
                     double emptyW = emptyWeight.getText().isEmpty() ? 0 : Double.parseDouble(emptyWeight.getText());
                     double loadedW = loadedWeight.getText().isEmpty() ? 0 : Double.parseDouble(loadedWeight.getText());
-                    double netWeight = loadedW - emptyW;
+                    double netWeightKg = loadedW - emptyW;
                     
-                    if(netWeight > 0) {
-                        weightField.setText(String.valueOf(netWeight));
-                        showAlert("तपशील जतन केले! निव्वळ वजन (Net Weight): " + netWeight + " टन");
+                    if(netWeightKg > 0) {
+                        // Assuming input is in KG, convert to Ton
+                        double netWeightTon = netWeightKg;
+                        if (loadedW >= 100) { // If loaded weight is >= 100, it's very likely in KG
+                            netWeightTon = netWeightKg / 1000.0;
+                        }
+                        
+                        weightField.setText(String.format("%.3f", netWeightTon));
+                        showAlert("तपशील जतन केले! निव्वळ वजन (Net Weight): " + String.format("%.3f", netWeightTon) + " टन");
                     } else {
                         showAlert("तपशील जतन केले!");
                     }
@@ -452,9 +564,12 @@ public class FarmerController {
             for (BillItem item : billItemsList) {
                 Purchase p = new Purchase();
                 p.setFarmerId(farmerId);
+                p.setBillNo(billNoField.getText());
                 p.setPurchaseDate(datePicker.getValue());
                 p.setCaneType(item.getCaneType());
                 p.setVehicleNo(vehicleNoState);
+                p.setEmptyWeight(item.getEmptyWeight());
+                p.setLoadedWeight(item.getLoadedWeight());
                 p.setWeight(item.getWeight());
                 p.setRatePerTon(item.getRate());
                 p.setTotalAmount(item.getAmount());
@@ -475,16 +590,74 @@ public class FarmerController {
             
             billText.append("\nएकूण रक्कम: ").append(totalNet);
             
+            // Generate PDF
+            try {
+                java.io.File pdfFile = com.sugarcane.erp.utils.PdfBillExporter.generateBillPdf(farmer, billNoField.getText(), datePicker.getValue(), billItemsList, totalNet);
+                
+                // Generate Ledger PDF
+                com.sugarcane.erp.service.LedgerService ledgerService = new com.sugarcane.erp.service.LedgerService();
+                java.time.LocalDate startDate = java.time.LocalDate.of(2000, 1, 1);
+                java.time.LocalDate endDate = java.time.LocalDate.now();
+                java.util.List<com.sugarcane.erp.model.LedgerEntry> ledgerEntries = ledgerService.getFarmerLedger(farmer, startDate, endDate);
+                String ledgerPdfPath = com.sugarcane.erp.utils.PdfLedgerExporter.generateLedgerPdf(farmer, startDate, endDate, ledgerEntries, null);
+                
+                // Open the Bill PDF automatically in a new thread
+                new Thread(() -> {
+                    try {
+                        java.awt.Desktop.getDesktop().open(pdfFile);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        javafx.application.Platform.runLater(() -> 
+                            showAlert("PDF उघडताना त्रुटी आली. फाईल येथे सेव्ह केली आहे: " + pdfFile.getAbsolutePath())
+                        );
+                    }
+                }).start();
+                
+                // Add WhatsApp Confirmation
+                final double finalNet = totalNet;
+                final Farmer finalFarmer = farmer;
+                javafx.application.Platform.runLater(() -> {
+                    javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("WhatsApp Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("शेतकऱ्याला WhatsApp वर मेसेज पाठवायचा आहे का?\n(WhatsApp Web मध्ये PDF फाईल्स आपोआप जोडल्या जात नाहीत. यासाठी तुमची फाईल्स असणारा फोल्डर ओपन होईल, तिथून तुम्ही PDF ड्रॅग करून WhatsApp मध्ये टाकू शकता.)");
+                    java.util.Optional<javafx.scene.control.ButtonType> result = alert.showAndWait();
+                    if (result.isPresent() && result.get() == javafx.scene.control.ButtonType.OK) {
+                        try {
+                            String farmerMobile = finalFarmer.getMobile();
+                            if (farmerMobile != null && farmerMobile.trim().length() >= 10) {
+                                farmerMobile = farmerMobile.trim();
+                                if (!farmerMobile.startsWith("91") && !farmerMobile.startsWith("+91")) {
+                                    farmerMobile = "91" + farmerMobile;
+                                } else if (farmerMobile.startsWith("+91")) {
+                                    farmerMobile = farmerMobile.substring(1);
+                                }
+                                String msg = "नमस्कार " + finalFarmer.getName() + ", तुमचे आजचे बिल तयार झाले आहे. एकूण रक्कम: ₹" + finalNet + ". सोबत बिल आणि खतावणी जोडली आहे. श्री गणेश कृपा ऊस सप्लायर्स.";
+                                String encodedMsg = java.net.URLEncoder.encode(msg, "UTF-8");
+                                String url = "https://wa.me/" + farmerMobile + "?text=" + encodedMsg;
+                                java.awt.Desktop.getDesktop().browse(new java.net.URI(url));
+                                
+                                // Open folder
+                                java.awt.Desktop.getDesktop().open(pdfFile.getParentFile());
+                            } else {
+                                showAlert("शेतकऱ्याचा मोबाईल नंबर बरोबर नाही: " + farmerMobile);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            showAlert("WhatsApp उघडताना त्रुटी आली: " + e.getMessage());
+                        }
+                    }
+                });
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                showAlert("PDF बनवताना त्रुटी आली: " + ex.getMessage());
+            }
+            
             // Reset UI
             billItemsList.clear();
             calculateFinalBalance();
             loadFarmers(); // Refresh history
-            
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("बिल प्रिंट");
-            alert.setHeaderText("बिल यशस्वीरित्या सेव्ह झाले.");
-            alert.setContentText(billText.toString());
-            alert.showAndWait();
+            refreshBillNo(); // Generate next bill number
             
         } catch (Exception e) {
             e.printStackTrace();
@@ -505,50 +678,179 @@ public class FarmerController {
         }
 
         try {
-            StringBuilder msg = new StringBuilder();
-            msg.append("नमस्कार ").append(farmerNameField.getText().trim()).append(",\n\n");
-            msg.append("तुमची उसाची पावती खालीलप्रमाणे:\n");
-            msg.append("तारीख: ").append(datePicker.getValue().toString()).append("\n\n");
-            
-            double total = 0;
-            for (BillItem item : billItemsList) {
-                msg.append(item.getCaneType()).append(" | वजन: ").append(item.getWeight())
-                   .append(" | रक्कम: ").append(item.getAmount()).append("\n");
-                total += item.getAmount();
+            // If there are unsaved items, print/save the bill first!
+            if (!billItemsList.isEmpty()) {
+                handlePrintBill();
             }
-            msg.append("\nएकूण रक्कम: Rs ").append(total).append("\n\nधन्यवाद!");
             
-            String encodedMsg = URLEncoder.encode(msg.toString(), StandardCharsets.UTF_8.toString());
+            // Now the bill is saved and the image is on the clipboard.
+            String msg = "नमस्कार " + farmerNameField.getText().trim() + ",\n\n" +
+                         "तुमची उसाची पावती खालीलप्रमाणे.\n" +
+                         "(टीप: कृपया 'Paste' (Ctrl+V) करून पावतीचा फोटो पाठवा)";
+            
+            String encodedMsg = java.net.URLEncoder.encode(msg, java.nio.charset.StandardCharsets.UTF_8.toString());
             String url = "https://wa.me/91" + mobile + "?text=" + encodedMsg;
             
-            Desktop.getDesktop().browse(new URI(url));
+            java.awt.Desktop.getDesktop().browse(new java.net.URI(url));
+            
+            showAlert("बिलाचा फोटो कॉपी झाला आहे! WhatsApp उघडल्यानंतर 'Paste (Ctrl+V)' करून फोटो पाठवा.");
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("WhatsApp उघडताना त्रुटी आली: " + e.getMessage());
         }
     }
 
+    private void showDateSelectionDialog(Farmer farmer, boolean isExcel) {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("तारीख निवडा (Select Date)");
+        dialog.setHeaderText(farmer.getName() + " चे लेजर काढण्यासाठी तारखेची श्रेणी निवडा");
+
+        ButtonType downloadButtonType = new ButtonType("डाऊनलोड (Download)", ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(downloadButtonType, ButtonType.CANCEL);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new javafx.geometry.Insets(20, 150, 10, 10));
+
+        DatePicker fromDate = new DatePicker();
+        fromDate.setPromptText("सुरुवात (From)");
+        DatePicker toDate = new DatePicker();
+        toDate.setPromptText("शेवट (End)");
+        
+        java.time.format.DateTimeFormatter dateFormatter = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        javafx.util.StringConverter<java.time.LocalDate> dateConverter = new javafx.util.StringConverter<java.time.LocalDate>() {
+            @Override public String toString(java.time.LocalDate date) { return date != null ? dateFormatter.format(date) : ""; }
+            @Override public java.time.LocalDate fromString(String string) {
+                try { return (string != null && !string.isEmpty()) ? java.time.LocalDate.parse(string, dateFormatter) : null; }
+                catch (Exception e) { return null; }
+            }
+        };
+        fromDate.setConverter(dateConverter);
+        toDate.setConverter(dateConverter);
+        toDate.setValue(java.time.LocalDate.now());
+
+        grid.add(new Label("सुरुवात तारीख (Start Date):"), 0, 0);
+        grid.add(fromDate, 1, 0);
+        grid.add(new Label("शेवट तारीख (End Date):"), 0, 1);
+        grid.add(toDate, 1, 1);
+
+        dialog.getDialogPane().setContent(grid);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == downloadButtonType) {
+                java.time.LocalDate start = fromDate.getValue();
+                java.time.LocalDate end = toDate.getValue();
+                
+                if (isExcel) {
+                    try {
+                        com.sugarcane.erp.service.LedgerService ledgerService = new com.sugarcane.erp.service.LedgerService();
+                        java.util.List<com.sugarcane.erp.model.LedgerEntry> entries = ledgerService.getFarmerLedger(farmer, start, end);
+                        
+                        TableView<com.sugarcane.erp.model.LedgerEntry> dummyTable = new TableView<>();
+                        
+                        TableColumn<com.sugarcane.erp.model.LedgerEntry, String> colDate = new TableColumn<>("तारीख");
+                        colDate.setCellValueFactory(cellData -> {
+                            if (cellData.getValue().getDate().getYear() < 2000) return new SimpleStringProperty("");
+                            return new SimpleStringProperty(dateFormatter.format(cellData.getValue().getDate()));
+                        });
+                        
+                        TableColumn<com.sugarcane.erp.model.LedgerEntry, String> colBillNo = new TableColumn<>("बिल नं.");
+                        colBillNo.setCellValueFactory(new PropertyValueFactory<>("billNo"));
+                        
+                        TableColumn<com.sugarcane.erp.model.LedgerEntry, String> colPart = new TableColumn<>("तपशील");
+                        colPart.setCellValueFactory(new PropertyValueFactory<>("particulars"));
+                        
+                        TableColumn<com.sugarcane.erp.model.LedgerEntry, String> colCane = new TableColumn<>("उसाचा प्रकार");
+                        colCane.setCellValueFactory(new PropertyValueFactory<>("caneType"));
+                        
+                        TableColumn<com.sugarcane.erp.model.LedgerEntry, String> colEmptyW = new TableColumn<>("खाली गाडी");
+                        colEmptyW.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEmptyWeight() > 0 ? String.format("%.0f", cellData.getValue().getEmptyWeight()) : "-"));
+                        
+                        TableColumn<com.sugarcane.erp.model.LedgerEntry, String> colLoadedW = new TableColumn<>("भरलेली गाडी");
+                        colLoadedW.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getLoadedWeight() > 0 ? String.format("%.0f", cellData.getValue().getLoadedWeight()) : "-"));
+                        
+                        TableColumn<com.sugarcane.erp.model.LedgerEntry, String> colWeight = new TableColumn<>("उसाचे वजन (टन)");
+                        colWeight.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getWeight() > 0 ? String.format("%.3f", cellData.getValue().getWeight()) : ""));
+                        
+                        TableColumn<com.sugarcane.erp.model.LedgerEntry, String> colDeb = new TableColumn<>("रक्कम (रु)");
+                        colDeb.setCellValueFactory(cellData -> new SimpleStringProperty(String.format("%.2f", cellData.getValue().getDebit())));
+                        
+                        TableColumn<com.sugarcane.erp.model.LedgerEntry, String> colCred = new TableColumn<>("जमा (रु)");
+                        colCred.setCellValueFactory(cellData -> new SimpleStringProperty(String.format("%.2f", cellData.getValue().getCredit())));
+                        
+                        TableColumn<com.sugarcane.erp.model.LedgerEntry, String> colBal = new TableColumn<>("बाकी (रु)");
+                        colBal.setCellValueFactory(cellData -> new SimpleStringProperty(String.format("%.2f", cellData.getValue().getBalance())));
+                        
+                        dummyTable.getColumns().addAll(colDate, colBillNo, colPart, colCane, colEmptyW, colLoadedW, colWeight, colDeb, colCred, colBal);
+                        dummyTable.getItems().setAll(entries);
+                        
+                        String name = "Ledger_Farmer_" + farmer.getName().replace(" ", "_");
+                        com.sugarcane.erp.utils.ExcelExporter.exportTableToExcel(dummyTable, name, farmerHistoryTable.getScene().getWindow());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        showAlert("Excel तयार करताना त्रुटी: " + e.getMessage());
+                    }
+                } else {
+                    // It's Khatawani (PDF)
+                    try {
+                        com.sugarcane.erp.service.LedgerService ls = new com.sugarcane.erp.service.LedgerService();
+                        java.util.List<com.sugarcane.erp.model.LedgerEntry> entries = ls.getFarmerLedger(farmer, start, end);
+                        
+                        String pdfPath = com.sugarcane.erp.utils.PdfLedgerExporter.generateLedgerPdf(farmer, start, end, entries, farmerHistoryTable.getScene().getWindow());
+                        
+                        if (pdfPath != null) {
+                            try {
+                                java.awt.Desktop.getDesktop().open(new java.io.File(pdfPath));
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                                showAlert("PDF तयार झाली, पण उघडता आली नाही: " + pdfPath);
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        showAlert("खतावणी PDF तयार करताना त्रुटी: " + e.getMessage());
+                    }
+                }
+            }
+            return null;
+        });
+
+        dialog.showAndWait();
+    }
+
     @FXML
     private void handleExportExcel() {
-        if (farmerHistoryTable.getItems().isEmpty()) {
-            showAlert("No data to export.");
-            return;
+        Farmer selectedFarmer = farmerHistoryTable.getSelectionModel().getSelectedItem();
+        if (selectedFarmer != null) {
+            showDateSelectionDialog(selectedFarmer, true);
+        } else {
+            if (farmerHistoryTable.getItems().isEmpty()) {
+                showAlert("No data to export.");
+                return;
+            }
+            com.sugarcane.erp.utils.ExcelExporter.exportTableToExcel(farmerHistoryTable, "Farmer_History", farmerHistoryTable.getScene().getWindow());
         }
-        com.sugarcane.erp.utils.ExcelExporter.exportTableToExcel(farmerHistoryTable, "Farmer_History", farmerHistoryTable.getScene().getWindow());
     }
 
     @FXML
     private void handleOpenLedger() {
-        try {
-            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/view/ledger.fxml"));
-            javafx.scene.Parent root = loader.load();
-            javafx.stage.Stage stage = new javafx.stage.Stage();
-            stage.setTitle("खतावणी");
-            stage.setScene(new javafx.scene.Scene(root, 1000, 700));
-            stage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-            showAlert("खतावणी उघडण्यात त्रुटी: " + e.getMessage());
+        Farmer selectedFarmer = farmerHistoryTable.getSelectionModel().getSelectedItem();
+        if (selectedFarmer != null) {
+            showDateSelectionDialog(selectedFarmer, false);
+        } else {
+            try {
+                javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/view/ledger.fxml"));
+                loader.setResources(java.util.ResourceBundle.getBundle("i18n.messages", com.sugarcane.erp.utils.LanguageManager.getLocale()));
+                javafx.scene.Parent root = loader.load();
+                javafx.stage.Stage stage = new javafx.stage.Stage();
+                stage.setTitle("खतावणी");
+                stage.setScene(new javafx.scene.Scene(root, 1000, 700));
+                stage.show();
+            } catch (Exception e) {
+                e.printStackTrace();
+                showAlert("खतावणी उघडण्यात त्रुटी: " + e.getMessage());
+            }
         }
     }
 
@@ -560,39 +862,50 @@ public class FarmerController {
             return;
         }
 
-        Dialog<com.sugarcane.erp.model.FarmerPayment> dialog = new Dialog<>();
-        dialog.setTitle("पेमेंट जमा करा");
-        dialog.setHeaderText(selectedFarmer.getName() + " यांचे पेमेंट");
+        double currentBalance = 0.0;
+        try {
+            com.sugarcane.erp.service.LedgerService ls = new com.sugarcane.erp.service.LedgerService();
+            java.util.List<com.sugarcane.erp.model.LedgerEntry> entries = ls.getFarmerLedger(selectedFarmer);
+            if (!entries.isEmpty()) {
+                currentBalance = entries.get(entries.size() - 1).getBalance();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        ButtonType saveButtonType = new ButtonType("सेव्ह करा", ButtonData.OK_DONE);
+        Dialog<com.sugarcane.erp.model.FarmerPayment> dialog = new Dialog<>();
+        dialog.setTitle("पेमेंट करा");
+        dialog.setHeaderText(selectedFarmer.getName() + " ची बाकी: ₹" + String.format("%.2f", currentBalance));
+
+        ButtonType saveButtonType = new ButtonType("पेमेंट करा (Pay)", ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
 
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
-        grid.setPadding(new javafx.geometry.Insets(20, 150, 10, 10));
+        grid.setPadding(new Insets(20, 150, 10, 10));
 
-        TextField amountField = new TextField();
-        amountField.setPromptText("रक्कम");
-        TextField modeField = new TextField("Cash");
-        modeField.setPromptText("पेमेंट मोड (Cash/Online)");
-        TextField refField = new TextField();
-        refField.setPromptText("संदर्भ क्र.");
+        TextField amountField = new TextField(String.format("%.2f", currentBalance));
+        ComboBox<String> modeCombo = new ComboBox<>(FXCollections.observableArrayList("Google Pay", "Phone Pay", "Net Banking", "Cash", "Cheque"));
+        modeCombo.getSelectionModel().select("Cash");
 
-        grid.add(new Label("रक्कम:"), 0, 0);
+        grid.add(new Label("दिलेली रक्कम (Amount):"), 0, 0);
         grid.add(amountField, 1, 0);
-        grid.add(new Label("मोड:"), 0, 1);
-        grid.add(modeField, 1, 1);
-        grid.add(new Label("संदर्भ क्र.:"), 0, 2);
-        grid.add(refField, 1, 2);
+        grid.add(new Label("कसे दिले (Payment Mode):"), 0, 1);
+        grid.add(modeCombo, 1, 1);
 
         dialog.getDialogPane().setContent(grid);
+        
+        javafx.application.Platform.runLater(() -> {
+            amountField.requestFocus();
+            amountField.selectAll();
+        });
 
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == saveButtonType) {
                 try {
                     double amt = Double.parseDouble(amountField.getText());
-                    return new com.sugarcane.erp.model.FarmerPayment(selectedFarmer.getId(), java.time.LocalDate.now(), amt, modeField.getText(), refField.getText());
+                    return new com.sugarcane.erp.model.FarmerPayment(selectedFarmer.getId(), java.time.LocalDate.now(), amt, modeCombo.getValue(), "");
                 } catch (NumberFormatException e) {
                     showAlert("कृपया योग्य रक्कम टाका.");
                 }
@@ -603,8 +916,6 @@ public class FarmerController {
         dialog.showAndWait().ifPresent(payment -> {
             try {
                 paymentDAO.addPayment(payment);
-                selectedFarmer.setOpeningBalance(selectedFarmer.getOpeningBalance() - payment.getAmount());
-                farmerService.updateFarmer(selectedFarmer);
                 loadFarmers();
                 showAlert("पेमेंट यशस्वीरित्या जमा झाले.");
             } catch (Exception e) {

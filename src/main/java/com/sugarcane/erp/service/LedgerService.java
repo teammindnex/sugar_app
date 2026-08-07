@@ -16,58 +16,92 @@ import java.util.List;
 
 public class LedgerService {
 
-    public List<LedgerEntry> getFarmerLedger(Farmer farmer) throws SQLException {
-        List<LedgerEntry> entries = new ArrayList<>();
+    public List<LedgerEntry> getFarmerLedger(Farmer farmer, LocalDate startDate, LocalDate endDate) throws SQLException {
+        List<LedgerEntry> allEntries = new ArrayList<>();
         
-        // Add Opening Balance
-        entries.add(new LedgerEntry(
-            LocalDate.now().minusYears(10), // Treat opening balance as oldest
-            "Opening Balance",
-            farmer.getOpeningBalance() > 0 ? farmer.getOpeningBalance() : 0,
-            farmer.getOpeningBalance() < 0 ? Math.abs(farmer.getOpeningBalance()) : 0
-        ));
-        
-        String sqlPurchases = "SELECT purchase_date, net_amount FROM Sugarcane_Purchases WHERE farmer_id = ?";
+        String sqlPurchases = "SELECT id, bill_no, purchase_date, net_amount, cane_type, empty_weight, loaded_weight, weight FROM Sugarcane_Purchases WHERE farmer_id = ?";
         try (Connection conn = DatabaseManager.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sqlPurchases)) {
             pstmt.setInt(1, farmer.getId());
             ResultSet rs = pstmt.executeQuery();
             while(rs.next()) {
-                entries.add(new LedgerEntry(
+                String bNo = rs.getString("bill_no");
+                if (bNo == null || bNo.trim().isEmpty()) {
+                    bNo = String.valueOf(rs.getInt("id"));
+                }
+                allEntries.add(new LedgerEntry(
                     rs.getDate("purchase_date").toLocalDate(),
-                    "Sugarcane Purchase",
-                    rs.getDouble("net_amount"), // We owe farmer -> Debit (Increase balance)
+                    bNo,
+                    "ऊस खरेदी (Sugarcane Purchase)",
+                    rs.getString("cane_type"),
+                    rs.getDouble("empty_weight"),
+                    rs.getDouble("loaded_weight"),
+                    rs.getDouble("weight"),
+                    rs.getDouble("net_amount"),
                     0
                 ));
             }
         }
         
-        String sqlPayments = "SELECT payment_date, amount FROM Farmer_Payments WHERE farmer_id = ?";
+        String sqlPayments = "SELECT id, payment_date, amount, payment_mode FROM Farmer_Payments WHERE farmer_id = ?";
         try (Connection conn = DatabaseManager.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sqlPayments)) {
             pstmt.setInt(1, farmer.getId());
             ResultSet rs = pstmt.executeQuery();
             while(rs.next()) {
-                entries.add(new LedgerEntry(
+                String mode = rs.getString("payment_mode");
+                String desc = "पेमेंट (Payment)";
+                if (mode != null && !mode.trim().isEmpty()) {
+                    desc += " - " + mode;
+                }
+                allEntries.add(new LedgerEntry(
                     rs.getDate("payment_date").toLocalDate(),
-                    "Payment Given",
-                    0,
-                    rs.getDouble("amount") // We paid farmer -> Credit (Decrease balance)
+                    String.valueOf(rs.getInt("id")),
+                    desc,
+                    "", 0, 0, 0, 0, rs.getDouble("amount")
                 ));
             }
         }
         
         // Sort by Date
-        entries.sort(Comparator.comparing(LedgerEntry::getDate));
+        allEntries.sort(Comparator.comparing(LedgerEntry::getDate));
         
-        // Calculate Running Balance
+        double carryForwardBalance = farmer.getOpeningBalance(); // Start with initial opening balance
+        List<LedgerEntry> filtered = new ArrayList<>();
+        
+        for (LedgerEntry entry : allEntries) {
+            LocalDate d = entry.getDate();
+            if (startDate != null && d.isBefore(startDate)) {
+                carryForwardBalance += entry.getDebit() - entry.getCredit();
+            } else if (endDate != null && d.isAfter(endDate)) {
+                // ignore
+            } else {
+                filtered.add(entry);
+            }
+        }
+        
+        List<LedgerEntry> finalList = new ArrayList<>();
+        // Always add the opening balance for the period
+        finalList.add(new LedgerEntry(
+            LocalDate.now().minusYears(10), 
+            "मागील बाकी (Opening Balance)", 
+            "",
+            0.0,
+            carryForwardBalance > 0 ? carryForwardBalance : 0,
+            carryForwardBalance < 0 ? Math.abs(carryForwardBalance) : 0
+        ));
+        finalList.addAll(filtered);
+        
         double balance = 0;
-        for (LedgerEntry e : entries) {
+        for (LedgerEntry e : finalList) {
             balance = balance + e.getDebit() - e.getCredit();
             e.setBalance(balance);
         }
-        
-        return entries;
+        return finalList;
+    }
+
+    public List<LedgerEntry> getFarmerLedger(Farmer farmer) throws SQLException {
+        return getFarmerLedger(farmer, null, null);
     }
 
     public List<LedgerEntry> getCustomerLedger(Customer customer) throws SQLException {
@@ -77,6 +111,8 @@ public class LedgerService {
         entries.add(new LedgerEntry(
             LocalDate.now().minusYears(10), // Treat opening balance as oldest
             "Opening Balance",
+            "",
+            0.0,
             customer.getOpeningBalance() > 0 ? customer.getOpeningBalance() : 0,
             customer.getOpeningBalance() < 0 ? Math.abs(customer.getOpeningBalance()) : 0
         ));
@@ -94,6 +130,8 @@ public class LedgerService {
                 entries.add(new LedgerEntry(
                     rs.getDate("sale_date").toLocalDate(),
                     "Sugarcane Sale",
+                    "",
+                    0.0,
                     total, // They owe us -> Debit
                     0
                 ));
@@ -103,6 +141,8 @@ public class LedgerService {
                     entries.add(new LedgerEntry(
                         rs.getDate("sale_date").toLocalDate(),
                         "Payment Received (On Sale)",
+                        "",
+                        0.0,
                         0,
                         rec // They paid us -> Credit
                     ));
@@ -119,6 +159,8 @@ public class LedgerService {
                 entries.add(new LedgerEntry(
                     rs.getDate("collection_date").toLocalDate(),
                     "Collection Received",
+                    "",
+                    0.0,
                     0,
                     rs.getDouble("amount") // They paid us -> Credit
                 ));

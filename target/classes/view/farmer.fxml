@@ -63,7 +63,7 @@
                             </TitledPane>
                             
                             <!-- Items Table -->
-                            <TableView fx:id="itemTable" VBox.vgrow="ALWAYS">
+                            <TableView fx:id="itemTable" VBox.vgrow="ALWAYS" minHeight="150" prefHeight="200">
                                 <columns>
                                     <TableColumn fx:id="colCaneType" text="उसाचा प्रकार" prefWidth="250"/>
                                     <TableColumn fx:id="colWeight" text="वजन" prefWidth="150"/>
@@ -89,7 +89,7 @@
                                 <Region HBox.hgrow="ALWAYS" />
                                 
                                 <!-- Totals -->
-                                <VBox spacing="15" style="-fx-background-color: #f1f5f9; -fx-padding: 20; -fx-border-color: #cbd5e1; -fx-border-radius: 5; -fx-background-radius: 5;" minWidth="300">
+                                <VBox spacing="15" style="-fx-background-color: rgba(241, 245, 249, 0.75); -fx-padding: 20; -fx-border-color: #cbd5e1; -fx-border-radius: 5; -fx-background-radius: 5;" minWidth="300">
                                     <HBox spacing="20" alignment="CENTER_RIGHT">
                                         <Label text="एकूण जमा (Total Amt):" style="-fx-font-size: 14px;"/>
                                         <Label fx:id="totalAmtLabel" text="0.00" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
@@ -115,7 +115,7 @@
                 
                 <!-- FARMER HISTORY TAB -->
                 <Tab text="शेतकरी इतिहास (Farmer History)">
-                    <VBox spacing="15" style="-fx-background-color: white;">
+                    <VBox spacing="15" style="-fx-background-color: transparent;">
                         <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
                         
                         <Label text="शेतकरी इतिहास (Farmer History)" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
@@ -142,6 +142,7 @@
                                 <TableColumn fx:id="colHistCaneType" text="उसाचा प्रकार" prefWidth="150" />
                                 <TableColumn fx:id="colHistTotalWeight" text="एकूण वजन" prefWidth="150" />
                                 <TableColumn fx:id="colHistDate" text="खरेदीची तारीख" prefWidth="150" />
+                                <TableColumn fx:id="colHistDeneBaki" text="देणे बाकी" prefWidth="150" />
                             </columns>
                         </TableView>
                     </VBox>

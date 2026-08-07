@@ -266,6 +266,7 @@ public class CustomerController {
     private void handleOpenLedger() {
         try {
             javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/view/ledger.fxml"));
+            loader.setResources(java.util.ResourceBundle.getBundle("i18n.messages", com.sugarcane.erp.utils.LanguageManager.getLocale()));
             javafx.scene.Parent root = loader.load();
             javafx.stage.Stage stage = new javafx.stage.Stage();
             stage.setTitle("खतावणी");

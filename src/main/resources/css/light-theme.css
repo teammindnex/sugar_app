@@ -11,18 +11,55 @@
     -error-color: #f44336;
 }
 
-.root {
+#root, #rootPane {
+    -fx-background-image: url('../images/sugarcane_bg.png');
+    -fx-background-size: cover;
+    -fx-background-position: center center;
+    -fx-background-repeat: no-repeat;
     -fx-background-color: -bg-color;
+}
+
+.root {
     -fx-font-family: 'Nirmala UI', 'Mangal', 'Arial Unicode MS', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     -fx-font-size: 14px;
+    -fx-background-color: transparent;
 }
 
 /* Material Design Card */
 .card {
-    -fx-background-color: -surface-color;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0, 0, 2);
+    -fx-background-color: rgba(255, 255, 255, 0.85); /* Increased opacity for better readability */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 2);
     -fx-background-radius: 8px;
     -fx-padding: 20px;
+}
+
+/* Make containers transparent so background shows through */
+.scroll-pane, .scroll-pane > .viewport, .tab-pane, .tab-pane .tab-header-area, .tab-pane .tab-header-background, .tab-pane .tab-content-area {
+    -fx-background-color: transparent;
+}
+
+/* Make TableView semi-transparent to show background */
+.table-view {
+    -fx-background-color: transparent;
+}
+.table-view .column-header-background, .table-view .column-header, .table-view .filler, .table-view .corner {
+    -fx-background-color: rgba(240, 240, 240, 0.85);
+}
+.table-row-cell {
+    -fx-background-color: rgba(255, 255, 255, 0.7);
+}
+.table-row-cell:odd {
+    -fx-background-color: rgba(245, 245, 245, 0.7);
+}
+.table-row-cell:empty {
+    -fx-background-color: transparent;
+}
+.table-row-cell:empty .table-cell {
+    -fx-border-color: transparent;
+}
+.table-row-cell:selected {
+    -fx-background-color: rgba(59, 130, 246, 0.8);
+    -fx-text-fill: white;
 }
 
 /* Buttons */
@@ -81,7 +118,7 @@
 
 /* Sidebar Styles */
 .sidebar-container {
-    -fx-background-color: white;
+    -fx-background-color: rgba(255, 255, 255, 0.1);
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 0);
 }
 
@@ -104,22 +141,27 @@
 }
 
 .nav-button-sidebar {
-    -fx-background-color: #2c3e50;
+    -fx-background-color: rgba(0, 0, 0, 0.5);
+    -fx-border-color: rgba(255, 255, 255, 0.4);
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
     -fx-text-fill: white;
-    -fx-font-size: 13px;
-    -fx-padding: 12 15;
+    -fx-font-size: 15px;
+    -fx-padding: 11 14; /* Reduced padding slightly to account for border */
     -fx-alignment: center-left;
     -fx-background-radius: 5;
     -fx-cursor: hand;
-    -fx-font-weight: bold;
+    -fx-font-weight: 900;
 }
 
 .nav-button-sidebar:hover, .nav-button-sidebar:focused {
-    -fx-background-color: #3b82f6;
+    -fx-background-color: rgba(59, 130, 246, 0.6);
+    -fx-border-color: rgba(255, 255, 255, 0.4);
 }
 
 .nav-button-sidebar.active {
-    -fx-background-color: #3b82f6;
+    -fx-background-color: rgba(59, 130, 246, 0.85);
+    -fx-border-color: rgba(255, 255, 255, 0.5);
 }
 
 /* Dashboard New Cards */
@@ -135,15 +177,15 @@
 }
 
 .card-blue {
-    -fx-background-color: #3b82f6;
+    -fx-background-color: rgba(59, 130, 246, 0.9);
 }
 
 .card-red {
-    -fx-background-color: #ef4444;
+    -fx-background-color: rgba(239, 68, 68, 0.9);
 }
 
 .card-green {
-    -fx-background-color: #22c55e;
+    -fx-background-color: rgba(34, 197, 94, 0.9);
 }
 
 .dashboard-card .card-title {

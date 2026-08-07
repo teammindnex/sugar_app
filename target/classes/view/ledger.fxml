@@ -7,10 +7,19 @@
 <BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sugarcane.erp.controller.LedgerController" styleClass="root">
     
     <top>
-        <HBox alignment="CENTER_LEFT" styleClass="card">
+        <VBox spacing="10" styleClass="card">
             <padding><Insets top="10" right="20" bottom="10" left="20"/></padding>
-            <Label text="%menu.reports" styleClass="header-label" />
-        </HBox>
+            <HBox alignment="CENTER_LEFT">
+                <Label text="%menu.reports" styleClass="header-label" />
+            </HBox>
+            <HBox spacing="15" alignment="CENTER_LEFT">
+                <Label text="पासून (From Date):" />
+                <DatePicker fx:id="fromDate" prefWidth="150" promptText="DD/MM/YYYY" />
+                <Label text="पर्यंत (To Date):" />
+                <DatePicker fx:id="toDate" prefWidth="150" promptText="DD/MM/YYYY" />
+                <Button text="शोधा (Search)" onAction="#handleDateFilter" styleClass="button" style="-fx-background-color: #3b82f6; -fx-text-fill: white;" />
+            </HBox>
+        </VBox>
     </top>
 
     <center>

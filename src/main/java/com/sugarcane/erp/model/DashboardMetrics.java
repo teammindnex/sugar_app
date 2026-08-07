@@ -10,6 +10,11 @@ public class DashboardMetrics {
     private int totalCustomers;
     private int totalWorkers;
     private int totalVehicles;
+    
+    private double monthlyPurchaseWeight;
+    private double monthlySalesWeight;
+    private double yearlyPurchaseWeight;
+    private double yearlySalesWeight;
 
     public double getTodayPurchase() { return todayPurchase; }
     public void setTodayPurchase(double todayPurchase) { this.todayPurchase = todayPurchase; }
@@ -37,4 +42,16 @@ public class DashboardMetrics {
 
     public int getTotalVehicles() { return totalVehicles; }
     public void setTotalVehicles(int totalVehicles) { this.totalVehicles = totalVehicles; }
+
+    public double getMonthlyPurchaseWeight() { return monthlyPurchaseWeight; }
+    public void setMonthlyPurchaseWeight(double monthlyPurchaseWeight) { this.monthlyPurchaseWeight = monthlyPurchaseWeight; }
+
+    public double getMonthlySalesWeight() { return monthlySalesWeight; }
+    public void setMonthlySalesWeight(double monthlySalesWeight) { this.monthlySalesWeight = monthlySalesWeight; }
+
+    public double getYearlyPurchaseWeight() { return yearlyPurchaseWeight; }
+    public void setYearlyPurchaseWeight(double yearlyPurchaseWeight) { this.yearlyPurchaseWeight = yearlyPurchaseWeight; }
+
+    public double getYearlySalesWeight() { return yearlySalesWeight; }
+    public void setYearlySalesWeight(double yearlySalesWeight) { this.yearlySalesWeight = yearlySalesWeight; }
 }

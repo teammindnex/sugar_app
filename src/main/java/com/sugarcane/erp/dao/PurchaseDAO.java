@@ -10,27 +10,30 @@ import java.util.List;
 public class PurchaseDAO {
 
     public void addPurchase(Purchase purchase) throws SQLException {
-        String sql = "INSERT INTO Sugarcane_Purchases (farmer_id, purchase_date, cane_type, vehicle_no, weight, " +
+        String sql = "INSERT INTO Sugarcane_Purchases (farmer_id, bill_no, purchase_date, cane_type, vehicle_no, empty_weight, loaded_weight, weight, " +
                      "rate_per_ton, total_amount, advance, loading_charges, cutting_charges, transport_charges, " +
-                     "other_charges, net_amount, remarks) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                     "other_charges, net_amount, remarks) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                      
         try (Connection conn = DatabaseManager.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
             pstmt.setInt(1, purchase.getFarmerId());
-            pstmt.setDate(2, Date.valueOf(purchase.getPurchaseDate()));
-            pstmt.setString(3, purchase.getCaneType());
-            pstmt.setString(4, purchase.getVehicleNo());
-            pstmt.setDouble(5, purchase.getWeight());
-            pstmt.setDouble(6, purchase.getRatePerTon());
-            pstmt.setDouble(7, purchase.getTotalAmount());
-            pstmt.setDouble(8, purchase.getAdvance());
-            pstmt.setDouble(9, purchase.getLoadingCharges());
-            pstmt.setDouble(10, purchase.getCuttingCharges());
-            pstmt.setDouble(11, purchase.getTransportCharges());
-            pstmt.setDouble(12, purchase.getOtherCharges());
-            pstmt.setDouble(13, purchase.getNetAmount());
-            pstmt.setString(14, purchase.getRemarks());
+            pstmt.setString(2, purchase.getBillNo());
+            pstmt.setDate(3, Date.valueOf(purchase.getPurchaseDate()));
+            pstmt.setString(4, purchase.getCaneType());
+            pstmt.setString(5, purchase.getVehicleNo());
+            pstmt.setDouble(6, purchase.getEmptyWeight());
+            pstmt.setDouble(7, purchase.getLoadedWeight());
+            pstmt.setDouble(8, purchase.getWeight());
+            pstmt.setDouble(9, purchase.getRatePerTon());
+            pstmt.setDouble(10, purchase.getTotalAmount());
+            pstmt.setDouble(11, purchase.getAdvance());
+            pstmt.setDouble(12, purchase.getLoadingCharges());
+            pstmt.setDouble(13, purchase.getCuttingCharges());
+            pstmt.setDouble(14, purchase.getTransportCharges());
+            pstmt.setDouble(15, purchase.getOtherCharges());
+            pstmt.setDouble(16, purchase.getNetAmount());
+            pstmt.setString(17, purchase.getRemarks());
             
             pstmt.executeUpdate();
         }
@@ -61,14 +64,30 @@ public class PurchaseDAO {
         }
     }
 
+    public String getNextBillNo() throws SQLException {
+        String sql = "SELECT MAX(id) FROM Sugarcane_Purchases";
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                int nextId = rs.getInt(1) + 1;
+                return "FRM-" + java.time.Year.now().getValue() + "-" + String.format("%04d", nextId);
+            }
+        }
+        return "FRM-" + java.time.Year.now().getValue() + "-0001";
+    }
+
     private Purchase mapResultSetToPurchase(ResultSet rs) throws SQLException {
         Purchase p = new Purchase();
         p.setId(rs.getInt("id"));
         p.setFarmerId(rs.getInt("farmer_id"));
         p.setFarmerName(rs.getString("farmer_name"));
+        p.setBillNo(rs.getString("bill_no"));
         p.setPurchaseDate(rs.getDate("purchase_date").toLocalDate());
         p.setCaneType(rs.getString("cane_type"));
         p.setVehicleNo(rs.getString("vehicle_no"));
+        p.setEmptyWeight(rs.getDouble("empty_weight"));
+        p.setLoadedWeight(rs.getDouble("loaded_weight"));
         p.setWeight(rs.getDouble("weight"));
         p.setRatePerTon(rs.getDouble("rate_per_ton"));
         p.setTotalAmount(rs.getDouble("total_amount"));

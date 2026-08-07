@@ -42,6 +42,19 @@ public class PdfGeneratorService {
         g2d.setColor(Color.WHITE);
         g2d.fillRect(0, 0, width, height);
 
+        try {
+            InputStream bgIs = PdfGeneratorService.class.getResourceAsStream("/images/sugarcane_bg.png");
+            if (bgIs != null) {
+                BufferedImage bgImage = javax.imageio.ImageIO.read(bgIs);
+                Composite originalComposite = g2d.getComposite();
+                g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.15f));
+                g2d.drawImage(bgImage, 0, 0, width, height, null);
+                g2d.setComposite(originalComposite);
+            }
+        } catch (Exception e) {
+            // Ignore if image not found
+        }
+
         // Load fonts
         Font boldFont = loadFont("NotoSansDevanagari-Bold.ttf", 45f);
         Font companyFont = loadFont("NotoSansDevanagari-Bold.ttf", 110f);
@@ -59,16 +72,16 @@ public class PdfGeneratorService {
         // Header
         g2d.setFont(boldFont.deriveFont(40f));
         g2d.setColor(MAROON);
-        drawCenteredString(g2d, "!! जय शारदा गजानन प्रसन्न !!", width, y);
+        drawCenteredString(g2d, "!! श्री गणेश प्रसन्न !! श्री भैरवनाथ प्रसन्न !!", width, y);
         
         y += 70;
         g2d.setColor(MAROON);
         g2d.setFont(smallFont.deriveFont(Font.BOLD, 38f));
-        drawMixedText(g2d, "मो.: ९४४४३९४८५१ / ९५५२२३७१२३", margin, y);
-        drawRightAlignedText(g2d, "मो.: ९५५२२३७१२२ / ८९९९८७४८८६", width - margin, y);
+        drawMixedText(g2d, "मो.: 9763948154 / 7588237123", margin, y);
+        drawRightAlignedText(g2d, "मो.: 8999875886 / 7588237122", width - margin, y);
 
         y += 40;
-        drawMixedText(g2d, "प्रोप्रा. बाबासो कोंडे", margin, y);
+        drawMixedText(g2d, "प्रोप्रा. दादासो कोंडे", margin, y);
         drawRightAlignedText(g2d, "प्रोप्रा. विराज कोंडे", width - margin, y);
 
         y += 120;

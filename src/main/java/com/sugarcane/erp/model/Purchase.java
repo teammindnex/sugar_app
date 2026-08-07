@@ -6,9 +6,12 @@ public class Purchase {
     private int id;
     private int farmerId;
     private String farmerName; // Transient for UI display
+    private String billNo;
     private LocalDate purchaseDate;
     private String caneType;
     private String vehicleNo;
+    private double emptyWeight;
+    private double loadedWeight;
     private double weight;
     private double ratePerTon;
     private double totalAmount;
@@ -31,6 +34,9 @@ public class Purchase {
     public String getFarmerName() { return farmerName; }
     public void setFarmerName(String farmerName) { this.farmerName = farmerName; }
 
+    public String getBillNo() { return billNo; }
+    public void setBillNo(String billNo) { this.billNo = billNo; }
+
     public LocalDate getPurchaseDate() { return purchaseDate; }
     public void setPurchaseDate(LocalDate purchaseDate) { this.purchaseDate = purchaseDate; }
 
@@ -39,6 +45,12 @@ public class Purchase {
 
     public String getVehicleNo() { return vehicleNo; }
     public void setVehicleNo(String vehicleNo) { this.vehicleNo = vehicleNo; }
+
+    public double getEmptyWeight() { return emptyWeight; }
+    public void setEmptyWeight(double emptyWeight) { this.emptyWeight = emptyWeight; }
+
+    public double getLoadedWeight() { return loadedWeight; }
+    public void setLoadedWeight(double loadedWeight) { this.loadedWeight = loadedWeight; }
 
     public double getWeight() { return weight; }
     public void setWeight(double weight) { this.weight = weight; }
