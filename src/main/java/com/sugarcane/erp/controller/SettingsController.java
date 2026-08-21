@@ -66,6 +66,30 @@ public class SettingsController {
             alert.showAndWait();
         }
     }
+    
+    @FXML
+    private void handleClearData() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("चेतावणी (Warning)");
+        alert.setHeaderText("तुम्ही सर्व डेटा डिलीट करत आहात!");
+        alert.setContentText("तुम्हाला खात्री आहे का की तुम्हाला संपूर्ण डेटा (शेतकरी, ग्राहक, खरेदी, विक्री इ.) कायमचा डिलीट करायचा आहे? ही कृती परत घेता येणार नाही.");
+        
+        if (alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
+            try {
+                DatabaseManager.getInstance().clearAllData();
+                Alert success = new Alert(Alert.AlertType.INFORMATION);
+                success.setHeaderText(null);
+                success.setContentText("सर्व डेटा यशस्वीरित्या डिलीट झाला आहे.");
+                success.showAndWait();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                Alert error = new Alert(Alert.AlertType.ERROR);
+                error.setHeaderText(null);
+                error.setContentText("डेटा डिलीट करताना त्रुटी आली: " + e.getMessage());
+                error.showAndWait();
+            }
+        }
+    }
 
     @FXML
     private void handleBackup() {

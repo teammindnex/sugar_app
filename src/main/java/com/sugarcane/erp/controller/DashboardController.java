@@ -24,9 +24,12 @@ public class DashboardController {
     @FXML private Label todayPurchaseLabel;
     @FXML private Label todaySalesLabel;
     @FXML private Label todayExpensesLabel;
-    @FXML private Label todayCollectionLabel;
-    @FXML private Label todayPaymentsLabel;
+    @FXML private Label todayPurchaseWeightLabel;
+    @FXML private Label todaySalesWeightLabel;
     @FXML private Label todayProfitLabel;
+    @FXML private VBox profitCard;
+    @FXML private Label profitTitleLabel;
+    @FXML private Label profitSubTitleLabel;
 
     @FXML private Label monthlyPurchaseWeightLabel;
     @FXML private Label monthlySalesWeightLabel;
@@ -70,11 +73,24 @@ public class DashboardController {
             todayPurchaseLabel.setText(String.format("₹ %.2f", metrics.getTodayPurchase()));
             todaySalesLabel.setText(String.format("₹ %.2f", metrics.getTodaySales()));
             todayExpensesLabel.setText(String.format("₹ %.2f", metrics.getTodayExpenses()));
-            todayCollectionLabel.setText(String.format("₹ %.2f", metrics.getTodayCollection()));
-            todayPaymentsLabel.setText(String.format("₹ %.2f", metrics.getTodayPayments()));
+            if (todayPurchaseWeightLabel != null) {
+                todayPurchaseWeightLabel.setText(String.format("%.2f टन", metrics.getTodayPurchaseWeight()));
+            }
+            if (todaySalesWeightLabel != null) {
+                todaySalesWeightLabel.setText(String.format("%.2f टन", metrics.getTodaySalesWeight()));
+            }
             
             double profit = metrics.getTodaySales() - metrics.getTodayPurchase() - metrics.getTodayExpenses();
-            todayProfitLabel.setText(String.format("₹ %.2f", profit));
+            
+            if (profitCard != null && profitTitleLabel != null && profitSubTitleLabel != null) {
+                profitCard.getStyleClass().remove("card-red");
+                if (!profitCard.getStyleClass().contains("card-green")) profitCard.getStyleClass().add("card-green");
+                profitTitleLabel.setText("आजचा नफा");
+                profitSubTitleLabel.setText("Today's Profit");
+                todayProfitLabel.setText(String.format("₹ %.2f", profit));
+            } else {
+                todayProfitLabel.setText(String.format("₹ %.2f", profit));
+            }
             
             if (monthlyPurchaseWeightLabel != null) {
                 monthlyPurchaseWeightLabel.setText(String.format("%.2f टन", metrics.getMonthlyPurchaseWeight()));

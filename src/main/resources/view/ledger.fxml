@@ -14,9 +14,9 @@
             </HBox>
             <HBox spacing="15" alignment="CENTER_LEFT">
                 <Label text="पासून (From Date):" />
-                <DatePicker fx:id="fromDate" prefWidth="150" promptText="DD/MM/YYYY" />
-                <Label text="पर्यंत (To Date):" />
-                <DatePicker fx:id="toDate" prefWidth="150" promptText="DD/MM/YYYY" />
+                <DatePicker fx:id="fromDate" prefWidth="150" promptText="DD-MM-YYYY" />
+                <Label text="ते (To):" />
+                <DatePicker fx:id="toDate" prefWidth="150" promptText="DD-MM-YYYY" />
                 <Button text="शोधा (Search)" onAction="#handleDateFilter" styleClass="button" style="-fx-background-color: #3b82f6; -fx-text-fill: white;" />
             </HBox>
         </VBox>
@@ -38,11 +38,11 @@
                     </HBox>
                     <TableView fx:id="farmerTable" VBox.vgrow="ALWAYS">
                         <columns>
-                            <TableColumn fx:id="colFDate" text="Date" prefWidth="120" />
-                            <TableColumn fx:id="colFParticulars" text="Particulars" prefWidth="250" />
-                            <TableColumn fx:id="colFDebit" text="Debit (Rs)" prefWidth="120" />
-                            <TableColumn fx:id="colFCredit" text="Credit (Rs)" prefWidth="120" />
-                            <TableColumn fx:id="colFBalance" text="Balance (Rs)" prefWidth="150" />
+                            <TableColumn fx:id="colFDate" text="तारीख" prefWidth="120" />
+                            <TableColumn fx:id="colFParticulars" text="तपशील" prefWidth="250" />
+                            <TableColumn fx:id="colFDebit" text="रक्कम (रु)" prefWidth="120" />
+                            <TableColumn fx:id="colFCredit" text="जमा (रु)" prefWidth="120" />
+                            <TableColumn fx:id="colFBalance" text="बाकी (रु)" prefWidth="150" />
                         </columns>
                     </TableView>
                 </VBox>
@@ -60,11 +60,11 @@
                     </HBox>
                     <TableView fx:id="customerTable" VBox.vgrow="ALWAYS">
                         <columns>
-                            <TableColumn fx:id="colCDate" text="Date" prefWidth="120" />
-                            <TableColumn fx:id="colCParticulars" text="Particulars" prefWidth="250" />
-                            <TableColumn fx:id="colCDebit" text="Debit (Rs)" prefWidth="120" />
-                            <TableColumn fx:id="colCCredit" text="Credit (Rs)" prefWidth="120" />
-                            <TableColumn fx:id="colCBalance" text="Balance (Rs)" prefWidth="150" />
+                            <TableColumn fx:id="colCDate" text="तारीख" prefWidth="120" />
+                            <TableColumn fx:id="colCParticulars" text="तपशील" prefWidth="250" />
+                            <TableColumn fx:id="colCDebit" text="रक्कम (रु)" prefWidth="120" />
+                            <TableColumn fx:id="colCCredit" text="जमा (रु)" prefWidth="120" />
+                            <TableColumn fx:id="colCBalance" text="बाकी (रु)" prefWidth="150" />
                         </columns>
                     </TableView>
                 </VBox>

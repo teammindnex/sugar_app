@@ -86,6 +86,17 @@ public class CustomerController {
     @FXML
     public void initialize() {
         customerService = new CustomerService();
+        datePicker.setConverter(new javafx.util.StringConverter<LocalDate>() {
+            private java.time.format.DateTimeFormatter dateFormatter = java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy");
+            @Override
+            public String toString(LocalDate date) {
+                return date != null ? dateFormatter.format(date) : "";
+            }
+            @Override
+            public LocalDate fromString(String string) {
+                return (string != null && !string.isEmpty()) ? LocalDate.parse(string, dateFormatter) : null;
+            }
+        });
         datePicker.setValue(LocalDate.now());
         
         // Setup Item Table Columns
@@ -105,7 +116,7 @@ public class CustomerController {
         colHistMobile.setCellValueFactory(new PropertyValueFactory<>("mobile"));
         colHistTotalPurchase.setCellValueFactory(cellData -> new SimpleStringProperty("0.00")); // Dummy
         colHistReceivable.setCellValueFactory(cellData -> new SimpleStringProperty(String.format("%.2f", cellData.getValue().getOpeningBalance())));
-        colHistDate.setCellValueFactory(cellData -> new SimpleStringProperty(LocalDate.now().toString()));
+        colHistDate.setCellValueFactory(cellData -> new SimpleStringProperty(LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy"))));
         colHistItems.setCellValueFactory(cellData -> new SimpleStringProperty("-"));
         
         // Add listeners for total calculation
@@ -205,6 +216,8 @@ public class CustomerController {
         updateTotals();
     }
 
+    private java.io.File lastGeneratedCustomerBillPdf;
+
     @FXML
     private void handlePrintBill() {
         try {
@@ -233,6 +246,57 @@ public class CustomerController {
                         billItemsList, totalAmt, prevBal, cashRec, finalBal,
                         file.getAbsolutePath()
                 );
+                lastGeneratedCustomerBillPdf = file;
+                
+                // --- DB Save Logic ---
+                com.sugarcane.erp.model.Customer customer = customerList.stream()
+                        .filter(c -> mobile.equals(c.getMobile()))
+                        .findFirst()
+                        .orElse(null);
+                        
+                if (customer == null) {
+                    customer = new com.sugarcane.erp.model.Customer(0, customerName, mobile, address, "", "", 0, "ACTIVE");
+                    int newId = customerService.addCustomer(customer);
+                    customer.setId(newId);
+                    customerList.add(customer);
+                }
+
+                com.sugarcane.erp.dao.SaleDAO saleDAO = new com.sugarcane.erp.dao.SaleDAO();
+                for (CustomerBillItem item : billItemsList) {
+                    com.sugarcane.erp.model.Sale sale = new com.sugarcane.erp.model.Sale();
+                    sale.setCustomerId(customer.getId());
+                    java.time.LocalDate saleDate = java.time.LocalDate.now();
+                    if (!date.isEmpty()) {
+                        try { saleDate = java.time.LocalDate.parse(date, java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")); } catch(Exception ignored) {}
+                    }
+                    sale.setSaleDate(saleDate);
+                    sale.setCaneType(item.getItemType());
+                    sale.setVehicleNo("");
+                    sale.setWeight(item.getQuantity());
+                    sale.setRatePerTon(item.getRate());
+                    sale.setTotalAmount(item.getAmount());
+                    sale.setReceivedAmount(0); // overall receipt handled in CustomerCollection
+                    sale.setNetAmount(item.getAmount());
+                    sale.setRemarks("Bill " + billNo);
+                    saleDAO.addSale(sale);
+                }
+
+                if (cashRec > 0) {
+                    com.sugarcane.erp.dao.CustomerCollectionDAO collectionDAO = new com.sugarcane.erp.dao.CustomerCollectionDAO();
+                    com.sugarcane.erp.model.CustomerCollection coll = new com.sugarcane.erp.model.CustomerCollection();
+                    coll.setCustomerId(customer.getId());
+                    java.time.LocalDate collDate = java.time.LocalDate.now();
+                    if (!date.isEmpty()) {
+                        try { collDate = java.time.LocalDate.parse(date, java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")); } catch(Exception ignored) {}
+                    }
+                    coll.setCollectionDate(collDate);
+                    coll.setAmount(cashRec);
+                    coll.setPaymentMode("Cash");
+                    coll.setRefNo("Bill " + billNo);
+                    coll.setRemarks("Received against Bill " + billNo);
+                    collectionDAO.addCollection(coll);
+                }
+                // ---------------------
                 
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setHeaderText(null);
@@ -250,7 +314,130 @@ public class CustomerController {
 
     @FXML
     private void handleWhatsApp() {
-        showAlert("WhatsApp sending logic will be implemented here.");
+        Customer selectedCustomer = customerHistoryTable.getSelectionModel().getSelectedItem();
+        String customerName = customerNameField.getText().trim();
+        String mobile = mobileField.getText().trim();
+
+        if (selectedCustomer != null && (customerName.isEmpty() || mobile.isEmpty())) {
+            customerName = selectedCustomer.getName();
+            mobile = selectedCustomer.getMobile();
+        }
+
+        if (customerName.isEmpty() || mobile.isEmpty()) {
+            showAlert("ग्राहकाचे नाव आणि मोबाईल नंबर आवश्यक आहे.");
+            return;
+        }
+        if (mobile.length() != 10) {
+            showAlert("मोबाईल नंबर १० अंकी असावा.");
+            return;
+        }
+
+        final String finalMobile = mobile;
+        Customer customer = customerList.stream()
+                .filter(c -> finalMobile.equals(c.getMobile()))
+                .findFirst()
+                .orElse(selectedCustomer);
+
+        if (customer == null) {
+            customer = new Customer(0, customerName, mobile, addressField.getText(), "", "", 0, "ACTIVE");
+            try {
+                int newId = customerService.addCustomer(customer);
+                customer.setId(newId);
+                customerList.add(customer);
+            } catch (Exception ignored) {}
+        }
+        
+        try {
+            java.io.File dir = new java.io.File(System.getProperty("user.home"), "SugarCaneBills");
+            if (!dir.exists()) dir.mkdirs();
+
+            java.io.File billPdfFile = null;
+            String billNo = billNoField.getText().trim();
+            if (billNo.isEmpty()) billNo = "Auto";
+
+            if (!billItemsList.isEmpty()) {
+                double totalAmt = billItemsList.stream().mapToDouble(CustomerBillItem::getAmount).sum();
+                double prevBal = previousBalanceField.getText().isEmpty() ? 0 : Double.parseDouble(previousBalanceField.getText());
+                double cashRec = cashReceivedField.getText().isEmpty() ? 0 : Double.parseDouble(cashReceivedField.getText());
+                double finalBal = totalAmt + prevBal - cashRec;
+                String date = datePicker.getValue() != null ? datePicker.getValue().format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")) : "";
+                
+                billPdfFile = new java.io.File(dir, "CustomerBill_" + customer.getName() + "_" + billNo + ".pdf");
+                com.sugarcane.erp.service.PdfGeneratorService.generateCustomerBillPdf(
+                        customer.getName(), customer.getMobile(), addressField.getText(), monthField.getText(), date, billNo,
+                        billItemsList, totalAmt, prevBal, cashRec, finalBal,
+                        billPdfFile.getAbsolutePath()
+                );
+                lastGeneratedCustomerBillPdf = billPdfFile;
+            } else if (lastGeneratedCustomerBillPdf != null && lastGeneratedCustomerBillPdf.exists()) {
+                billPdfFile = lastGeneratedCustomerBillPdf;
+            } else {
+                java.io.File checkFile = new java.io.File(dir, "CustomerBill_" + customer.getName() + "_" + billNo + ".pdf");
+                if (checkFile.exists()) {
+                    billPdfFile = checkFile;
+                } else {
+                    final String cName = customer.getName();
+                    java.io.File[] matchingFiles = dir.listFiles((d, name) -> name.startsWith("CustomerBill_" + cName) || name.startsWith("Bill_" + cName));
+                    if (matchingFiles != null && matchingFiles.length > 0) {
+                        java.util.Arrays.sort(matchingFiles, (f1, f2) -> Long.compare(f2.lastModified(), f1.lastModified()));
+                        billPdfFile = matchingFiles[0];
+                    }
+                }
+            }
+
+            // Generate Customer Ledger PDF
+            com.sugarcane.erp.service.LedgerService ledgerService = new com.sugarcane.erp.service.LedgerService();
+            java.time.LocalDate startDate = java.time.LocalDate.of(2000, 1, 1);
+            java.time.LocalDate endDate = java.time.LocalDate.now();
+            java.util.List<com.sugarcane.erp.model.LedgerEntry> ledgerEntries = ledgerService.getCustomerLedger(customer);
+            String ledgerPdfPath = com.sugarcane.erp.utils.PdfLedgerExporter.generateCustomerLedgerPdf(customer, startDate, endDate, ledgerEntries, null);
+            java.io.File ledgerPdfFile = (ledgerPdfPath != null) ? new java.io.File(ledgerPdfPath) : null;
+
+            // Copy both PDF files to system clipboard so user can press Ctrl+V directly in WhatsApp
+            javafx.scene.input.Clipboard clipboard = javafx.scene.input.Clipboard.getSystemClipboard();
+            javafx.scene.input.ClipboardContent cbContent = new javafx.scene.input.ClipboardContent();
+            java.util.List<java.io.File> filesList = new java.util.ArrayList<>();
+            if (billPdfFile != null && billPdfFile.exists()) filesList.add(billPdfFile);
+            if (ledgerPdfFile != null && ledgerPdfFile.exists()) filesList.add(ledgerPdfFile);
+            if (!filesList.isEmpty()) {
+                cbContent.putFiles(filesList);
+                clipboard.setContent(cbContent);
+            }
+
+            String msg = "नमस्कार " + customer.getName() + ",\n\n" +
+                         "सोबत तुमचे बिल आणि खतावणी PDF जोडली आहे.\n" +
+                         "श्री गणेश कृपा ऊस सप्लायर्स.";
+            
+            String customerMobile = mobile;
+            if (!customerMobile.startsWith("91") && !customerMobile.startsWith("+91")) {
+                customerMobile = "91" + customerMobile;
+            } else if (customerMobile.startsWith("+91")) {
+                customerMobile = customerMobile.substring(1);
+            }
+            
+            String encodedMsg = java.net.URLEncoder.encode(msg, java.nio.charset.StandardCharsets.UTF_8.toString());
+            String url = "https://wa.me/" + customerMobile + "?text=" + encodedMsg;
+            
+            java.awt.Desktop.getDesktop().browse(new java.net.URI(url));
+            
+            // Open Bills folder and highlight file
+            if (dir.exists()) {
+                if (billPdfFile != null && billPdfFile.exists()) {
+                    try {
+                        new ProcessBuilder("explorer.exe", "/select," + billPdfFile.getAbsolutePath()).start();
+                    } catch (Exception ex) {
+                        java.awt.Desktop.getDesktop().open(dir);
+                    }
+                } else {
+                    java.awt.Desktop.getDesktop().open(dir);
+                }
+            }
+            
+            showAlert("WhatsApp वेब उघडले आहे!\n\n१. बिल आणि खतावणी PDF दोन्ही आपोआप कॉपी झाल्या आहेत, फक्त WhatsApp चॅटमध्ये Ctrl + V (Paste) दाबा.\n२. किंवा उघडलेल्या फोल्डरमधून PDF फाईल्स WhatsApp मध्ये ड्रॅग करा.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("WhatsApp उघडताना त्रुटी आली: " + e.getMessage());
+        }
     }
 
     @FXML
@@ -301,8 +488,21 @@ public class CustomerController {
 
     private void showAlert(String msg) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("माहिती (Information)");
         alert.setHeaderText(null);
         alert.setContentText(msg);
+        try {
+            javafx.stage.Window owner = null;
+            if (customerNameField != null && customerNameField.getScene() != null) {
+                owner = customerNameField.getScene().getWindow();
+            } else if (customerHistoryTable != null && customerHistoryTable.getScene() != null) {
+                owner = customerHistoryTable.getScene().getWindow();
+            }
+            if (owner != null) {
+                alert.initOwner(owner);
+                alert.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            }
+        } catch (Exception ignored) {}
         alert.showAndWait();
     }
 }

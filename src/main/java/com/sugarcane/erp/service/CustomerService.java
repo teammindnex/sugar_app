@@ -14,8 +14,8 @@ public class CustomerService {
         this.customerDAO = new CustomerDAO();
     }
 
-    public void addCustomer(Customer customer) throws SQLException {
-        customerDAO.addCustomer(customer);
+    public int addCustomer(Customer customer) throws SQLException {
+        return customerDAO.addCustomer(customer);
     }
 
     public List<Customer> getAllCustomers() throws SQLException {

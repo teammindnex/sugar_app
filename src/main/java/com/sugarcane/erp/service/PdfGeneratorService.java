@@ -72,7 +72,7 @@ public class PdfGeneratorService {
         // Header
         g2d.setFont(boldFont.deriveFont(40f));
         g2d.setColor(MAROON);
-        drawCenteredString(g2d, "!! श्री गणेश प्रसन्न !! श्री भैरवनाथ प्रसन्न !!", width, y);
+        drawCenteredString(g2d, "!! श्री गणेश प्रसन्न !!", width, y);
         
         y += 70;
         g2d.setColor(MAROON);

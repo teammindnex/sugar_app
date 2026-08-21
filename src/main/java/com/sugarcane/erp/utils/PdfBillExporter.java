@@ -45,12 +45,10 @@ public class PdfBillExporter {
         // 1. Top Gods Header
         HBox topGodsBox = new HBox();
         topGodsBox.setAlignment(Pos.CENTER);
-        topGodsBox.setSpacing(80);
         
         try {
             VBox ganeshBox = createGodBox("|| श्री गणेश प्रसन्न ||", "/images/ganesh.png");
-            VBox bhairavBox = createGodBox("|| श्री भैरवनाथ प्रसन्न ||", "/images/bhairavnath.png");
-            topGodsBox.getChildren().addAll(ganeshBox, bhairavBox);
+            topGodsBox.getChildren().add(ganeshBox);
         } catch (Exception e) {}
 
         // 2. Main Title and Subtitle
@@ -90,14 +88,14 @@ public class PdfBillExporter {
         propBox.setAlignment(Pos.CENTER);
         propBox.setPadding(new Insets(10, 0, 10, 0));
         
-        Label p1 = new Label("👤 प्रोप. दादासो कोंडे\n9763948154 / 7588237123");
+        Label p1 = new Label("👤 प्रोप्रा. दादासो कोंडे\n9763948154 / 7588237123");
         p1.setTextAlignment(TextAlignment.CENTER);
         p1.setStyle("-fx-font-family: " + FONT_FAMILY + "; -fx-font-size: 16px; -fx-font-weight: bold;");
         
         Separator sep = new Separator(Orientation.VERTICAL);
         sep.setStyle("-fx-background-color: #81C784;");
         
-        Label p2 = new Label("👤 प्रोप. विराज कोंडे\n8999875886 / 7588237122");
+        Label p2 = new Label("👤 प्रोप्रा. विराज कोंडे\n8999875886 / 7588237122");
         p2.setTextAlignment(TextAlignment.CENTER);
         p2.setStyle("-fx-font-family: " + FONT_FAMILY + "; -fx-font-size: 16px; -fx-font-weight: bold;");
         
@@ -115,13 +113,13 @@ public class PdfBillExporter {
         infoGrid.setStyle("-fx-border-color: #A5D6A7; -fx-border-width: 2; -fx-border-radius: 10; -fx-background-radius: 10; -fx-background-color: #FAFAFA;");
         
         ColumnConstraints c1 = new ColumnConstraints(); c1.setPercentWidth(20);
-        ColumnConstraints c2 = new ColumnConstraints(); c2.setPercentWidth(35);
-        ColumnConstraints c3 = new ColumnConstraints(); c3.setPercentWidth(15);
+        ColumnConstraints c2 = new ColumnConstraints(); c2.setPercentWidth(33);
+        ColumnConstraints c3 = new ColumnConstraints(); c3.setPercentWidth(17);
         ColumnConstraints c4 = new ColumnConstraints(); c4.setPercentWidth(30);
         infoGrid.getColumnConstraints().addAll(c1, c2, c3, c4);
 
         addInfoRow(infoGrid, 0, "👤 शेतकऱ्याचे नाव", farmer.getName(), "🧾 बिल क्रमांक", billNo);
-        addInfoRow(infoGrid, 1, "🛺 मोबाईल नंबर", farmer.getMobile(), "📅 तारीख", date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        addInfoRow(infoGrid, 1, "🛺 मोबाईल नंबर", farmer.getMobile(), "📅 तारीख", date.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
 
         // 6. Items Table
         VBox tableContainer = new VBox();
@@ -167,33 +165,7 @@ public class PdfBillExporter {
         
         tableContainer.getChildren().add(table);
 
-        // Total Box (aligned to right)
-        VBox totalBox = new VBox();
-        totalBox.setStyle("-fx-border-color: #81C784; -fx-border-width: 2; -fx-border-radius: 5; -fx-background-color: white;");
-        totalBox.setMaxWidth(250);
-        
-        Label totalTitle = new Label("एकूण रक्कम");
-        totalTitle.setMaxWidth(Double.MAX_VALUE);
-        totalTitle.setAlignment(Pos.CENTER);
-        totalTitle.setStyle("-fx-font-family: " + FONT_FAMILY + "; -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-color: #E8F5E9; -fx-padding: 8; -fx-border-color: #81C784; -fx-border-width: 0 0 1 0;");
-        
-        Label totalVal = new Label(String.format("₹ %.2f", totalAmount));
-        totalVal.setMaxWidth(Double.MAX_VALUE);
-        totalVal.setAlignment(Pos.CENTER);
-        totalVal.setStyle("-fx-font-family: " + FONT_FAMILY + "; -fx-font-size: 24px; -fx-font-weight: bold; -fx-padding: 10; -fx-text-fill: #1B5E20;");
-        
-        String amountInWords = NumberToMarathiWordsConverter.convert((long) totalAmount) + " रुपये मात्र";
-        Label amountWordsLabel = new Label("अक्षरी: " + amountInWords);
-        amountWordsLabel.setStyle("-fx-font-family: " + FONT_FAMILY + "; -fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #388E3C; -fx-padding: 5;");
-        amountWordsLabel.setMaxWidth(Double.MAX_VALUE);
-        amountWordsLabel.setAlignment(Pos.CENTER);
-        
-        totalBox.getChildren().addAll(totalTitle, totalVal, amountWordsLabel);
-        
-        HBox totalContainer = new HBox();
-        totalContainer.setAlignment(Pos.CENTER_RIGHT);
-        totalContainer.getChildren().add(totalBox);
-        totalContainer.setPadding(new Insets(10, 0, 0, 0));
+        // Total Box REMOVED as per user request
 
         // Note
         Label noteLabel = new Label("टीप: योग्य दरात ऊस खरेदी केली जाईल.");
@@ -216,10 +188,10 @@ public class PdfBillExporter {
         HBox sigBox = new HBox();
         sigBox.setAlignment(Pos.CENTER);
         
-        VBox farmerSig = new VBox(15);
+        VBox farmerSig = new VBox(5);
         farmerSig.setAlignment(Pos.CENTER);
         Label fSigLabel = new Label("✍️ शेतकरी सही");
-        fSigLabel.setStyle("-fx-font-family: " + FONT_FAMILY + "; -fx-font-size: 14px; -fx-font-weight: bold;");
+        fSigLabel.setStyle("-fx-font-family: " + FONT_FAMILY + "; -fx-font-size: 12px; -fx-font-weight: bold;");
         Label fLine = new Label("------------------------");
         farmerSig.getChildren().addAll(fSigLabel, fLine);
         
@@ -227,27 +199,27 @@ public class PdfBillExporter {
         StackPane badge = new StackPane();
         try {
             javafx.scene.image.ImageView logoView = new javafx.scene.image.ImageView(new javafx.scene.image.Image(PdfBillExporter.class.getResourceAsStream("/images/company_logo.png")));
-            logoView.setFitWidth(90);
-            logoView.setFitHeight(90);
-            badge.setStyle("-fx-background-color: white; -fx-background-radius: 50; -fx-border-color: #4CAF50; -fx-border-width: 3; -fx-border-radius: 50; -fx-padding: 5;");
-            badge.setMaxSize(100, 100);
+            logoView.setFitWidth(50);
+            logoView.setFitHeight(50);
+            badge.setStyle("-fx-background-color: white; -fx-background-radius: 50; -fx-border-color: #4CAF50; -fx-border-width: 2; -fx-border-radius: 50; -fx-padding: 3;");
+            badge.setMaxSize(60, 60);
             badge.getChildren().add(logoView);
         } catch (Exception e) {
             badge.setStyle("-fx-background-color: white; -fx-border-color: #1B5E20; -fx-border-width: 2; -fx-border-radius: 50; -fx-background-radius: 50; -fx-border-style: dashed;");
-            badge.setPrefSize(100, 100);
-            badge.setMaxSize(100, 100);
+            badge.setPrefSize(60, 60);
+            badge.setMaxSize(60, 60);
             Label badgeText = new Label("QUALITY CANE\n\n\nBETTER FUTURE");
             badgeText.setTextAlignment(TextAlignment.CENTER);
-            badgeText.setStyle("-fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: #1B5E20;");
+            badgeText.setStyle("-fx-font-size: 8px; -fx-font-weight: bold; -fx-text-fill: #1B5E20;");
             Label badgeIcon = new Label("*");
-            badgeIcon.setStyle("-fx-font-size: 32px; -fx-text-fill: #1B5E20;");
+            badgeIcon.setStyle("-fx-font-size: 24px; -fx-text-fill: #1B5E20;");
             badge.getChildren().addAll(badgeText, badgeIcon);
         }
         
-        VBox supplierSig = new VBox(15);
+        VBox supplierSig = new VBox(5);
         supplierSig.setAlignment(Pos.CENTER);
         Label sSigLabel = new Label("✍️ सप्लायर सही");
-        sSigLabel.setStyle("-fx-font-family: " + FONT_FAMILY + "; -fx-font-size: 14px; -fx-font-weight: bold;");
+        sSigLabel.setStyle("-fx-font-family: " + FONT_FAMILY + "; -fx-font-size: 12px; -fx-font-weight: bold;");
         Label sLine = new Label("------------------------");
         supplierSig.getChildren().addAll(sSigLabel, sLine);
         
@@ -268,7 +240,7 @@ public class PdfBillExporter {
 
         innerContainer.getChildren().addAll(
             topGodsBox, titleBox, receiptTypeBox, tagline, 
-            propBox, horizSep, infoGrid, tableContainer, totalContainer, 
+            propBox, horizSep, infoGrid, tableContainer, 
             noteLabel, thanksBox, sigBox, bottomBar
         );
 
@@ -315,11 +287,7 @@ public class PdfBillExporter {
         ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", baos);
         byte[] imageBytes = baos.toByteArray();
 
-        ClipboardContent content = new ClipboardContent();
-        content.putImage(image);
-        Clipboard.getSystemClipboard().setContent(content);
-
-        File dir = new File(System.getProperty("user.home"), "SugarCaneBills/Bills");
+        File dir = new File(System.getProperty("user.home"), "SugarCaneBills");
         if (!dir.exists()) dir.mkdirs();
         File pdfFile = new File(dir, "Bill_" + billNo + ".pdf");
 

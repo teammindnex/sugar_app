@@ -1,5 +1,6 @@
 com\sugarcane\erp\dao\TransportDAO.class
 com\sugarcane\erp\TestLoad.class
+com\sugarcane\erp\dao\CustomerCollectionDAO.class
 com\sugarcane\erp\model\DashboardMetrics.class
 com\sugarcane\erp\service\ReportService.class
 com\sugarcane\erp\utils\MarathiTransliterator.class
@@ -8,6 +9,7 @@ com\sugarcane\erp\controller\CustomerController$CustomerBillItem.class
 com\sugarcane\erp\service\AuthService.class
 com\sugarcane\erp\dao\PurchaseDAO.class
 com\sugarcane\erp\controller\LedgerController$2.class
+com\sugarcane\erp\controller\ReportController$6.class
 com\sugarcane\erp\model\DailyReportItem.class
 com\sugarcane\erp\MainApplication.class
 com\sugarcane\erp\controller\FarmerController$1.class
@@ -17,6 +19,7 @@ com\sugarcane\erp\controller\TransportController.class
 com\sugarcane\erp\utils\ThemeManager.class
 com\sugarcane\erp\dao\WorkerDailyEntryDAO.class
 com\sugarcane\erp\utils\PdfBillExporter.class
+com\sugarcane\erp\controller\ReportController$3.class
 com\sugarcane\erp\dao\ReportDAO.class
 com\sugarcane\erp\service\DashboardService.class
 com\sugarcane\erp\dao\WorkerDAO.class
@@ -30,6 +33,7 @@ com\sugarcane\erp\dao\FarmerPaymentDAO.class
 com\sugarcane\erp\dao\TransportTripDAO.class
 com\sugarcane\erp\model\Sale.class
 com\sugarcane\erp\model\TransportTrip.class
+com\sugarcane\erp\controller\ReportController$4.class
 com\sugarcane\erp\service\WorkerService.class
 com\sugarcane\erp\controller\TransportTripController$2.class
 com\sugarcane\erp\service\PdfGeneratorService.class
@@ -42,17 +46,20 @@ com\sugarcane\erp\model\LedgerEntry.class
 com\sugarcane\erp\utils\PdfLedgerExporter.class
 com\sugarcane\erp\controller\TransportTripController$1.class
 com\sugarcane\erp\model\Purchase.class
+com\sugarcane\erp\controller\ReportController$5.class
 com\sugarcane\erp\dao\ExpenseDAO.class
 com\sugarcane\erp\service\SaleService.class
 com\sugarcane\erp\controller\LedgerController$3.class
 com\sugarcane\erp\dao\CustomerDAO.class
 com\sugarcane\erp\service\TransportTripService.class
+com\sugarcane\erp\controller\ReportController$2.class
 com\sugarcane\erp\model\Customer.class
 com\sugarcane\erp\controller\WorkerDailyEntryController$1.class
 com\sugarcane\erp\controller\FarmerController$2.class
 com\sugarcane\erp\service\SettingService.class
 com\sugarcane\erp\controller\WorkerController.class
 com\sugarcane\erp\controller\TransportTripController.class
+com\sugarcane\erp\model\CustomerCollection.class
 com\sugarcane\erp\service\ExpenseService.class
 com\sugarcane\erp\service\TransportService.class
 com\sugarcane\erp\model\WorkerDailyEntry.class
@@ -61,6 +68,8 @@ com\sugarcane\erp\model\Expense.class
 com\sugarcane\erp\controller\CustomerController.class
 com\sugarcane\erp\model\FarmerPayment.class
 com\sugarcane\erp\controller\SettingsController.class
+com\sugarcane\erp\utils\DateUtil$1.class
+com\sugarcane\erp\controller\CustomerController$1.class
 com\sugarcane\erp\controller\PurchaseController.class
 com\sugarcane\erp\dao\DashboardDAO.class
 com\sugarcane\erp\dao\SaleDAO.class
@@ -83,4 +92,5 @@ com\sugarcane\erp\utils\PdfReceiptExporter$WatermarkEvent.class
 com\sugarcane\erp\utils\NumberToMarathiWordsConverter.class
 com\sugarcane\erp\controller\SaleController$1.class
 com\sugarcane\erp\dao\SettingDAO.class
+com\sugarcane\erp\utils\DateUtil.class
 com\sugarcane\erp\service\PurchaseService.class

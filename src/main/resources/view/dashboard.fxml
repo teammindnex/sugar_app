@@ -39,7 +39,6 @@
                 <Button text="ग्राहक (Customer)" onAction="#showCustomer" styleClass="nav-button-sidebar" maxWidth="Infinity" />
                 <Button text="कामगार (Worker)" onAction="#showWorker" styleClass="nav-button-sidebar" maxWidth="Infinity" />
                 <Button text="ट्रान्सपोर्ट (Transport)" onAction="#showTransport" styleClass="nav-button-sidebar" maxWidth="Infinity" />
-                <Button text="अहवाल (Reports)" onAction="#showReports" styleClass="nav-button-sidebar" maxWidth="Infinity" />
                 <Button text="सेटिंग्स (Settings)" onAction="#showSettings" styleClass="nav-button-sidebar" maxWidth="Infinity" />
                 
                 <Region prefHeight="10.0" />
@@ -91,12 +90,12 @@
                         </VBox>
 
                         <!-- Today's Profit Card -->
-                        <VBox spacing="15" styleClass="dashboard-card, card-green" HBox.hgrow="ALWAYS">
+                        <VBox fx:id="profitCard" spacing="15" styleClass="dashboard-card, card-green" HBox.hgrow="ALWAYS">
                             <HBox alignment="CENTER_LEFT" spacing="15">
                                 <Label text="💸" style="-fx-font-size: 32px;"/>
                                 <VBox>
-                                    <Label text="आजचा नफा" styleClass="card-title"/>
-                                    <Label text="Today's Profit" styleClass="card-subtitle"/>
+                                    <Label fx:id="profitTitleLabel" text="आजचा नफा" styleClass="card-title"/>
+                                    <Label fx:id="profitSubTitleLabel" text="Today's Profit" styleClass="card-subtitle"/>
                                 </VBox>
                             </HBox>
                             <Label fx:id="todayProfitLabel" text="₹ 0.00" styleClass="card-value"/>
@@ -106,12 +105,12 @@
                     <GridPane alignment="CENTER" hgap="20" vgap="20" style="-fx-padding: 20 0 0 0;">
                         
                         <VBox styleClass="card" minWidth="220" minHeight="120" alignment="CENTER" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                            <Label text="आजची वसुली (Today's Collection)" styleClass="sub-header-label" />
-                            <Label fx:id="todayCollectionLabel" text="₹ 0.00" styleClass="header-label" style="-fx-text-fill: -primary-color; -fx-font-size: 28px; -fx-padding: 10 0 0 0;" />
+                            <Label text="आजची खरेदी ऊसाची (टन मध्ये)" styleClass="sub-header-label" />
+                            <Label fx:id="todayPurchaseWeightLabel" text="0.00 टन" styleClass="header-label" style="-fx-text-fill: #16a34a; -fx-font-size: 28px; -fx-padding: 10 0 0 0;" />
                         </VBox>
                         <VBox styleClass="card" minWidth="220" minHeight="120" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                            <Label text="आजचे पेमेंट (Today's Payments)" styleClass="sub-header-label" />
-                            <Label fx:id="todayPaymentsLabel" text="₹ 0.00" styleClass="header-label" style="-fx-text-fill: -error-color; -fx-font-size: 28px; -fx-padding: 10 0 0 0;" />
+                            <Label text="आजची विक्री ऊसाची (टन मध्ये)" styleClass="sub-header-label" />
+                            <Label fx:id="todaySalesWeightLabel" text="0.00 टन" styleClass="header-label" style="-fx-text-fill: #2563eb; -fx-font-size: 28px; -fx-padding: 10 0 0 0;" />
                         </VBox>
                         <VBox styleClass="card" minWidth="220" minHeight="120" alignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="0">
                             <Label text="आजचा खर्च (Today's Expenses)" styleClass="sub-header-label" />

@@ -49,7 +49,7 @@ public class PdfReportExporter {
             table.addCell(cell);
         }
 
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         double totalPurWt = 0, totalPurAmt = 0, totalSaleWt = 0, totalSaleAmt = 0;
 
         for (DailyReportItem item : items) {

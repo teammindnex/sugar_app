@@ -7,17 +7,17 @@
 <BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sugarcane.erp.controller.TransportTripController" styleClass="root">
     
     <top>
-        <HBox alignment="CENTER_LEFT" styleClass="card">
+        <HBox alignment="CENTER_LEFT" style="-fx-background-color: transparent;">
             <padding><Insets top="10" right="20" bottom="10" left="20"/></padding>
-            <Label fx:id="titleLabel" text="%transportTrip.title" styleClass="header-label" />
+            <Label fx:id="titleLabel" text="%transportTrip.title" style="-fx-font-size: 20px; -fx-font-weight: bold;" />
         </HBox>
     </top>
 
     <center>
-        <SplitPane dividerPositions="0.45">
+        <SplitPane dividerPositions="0.45" style="-fx-background-color: transparent;">
             <!-- Left Side: Form -->
-            <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
-                <VBox spacing="10.0" styleClass="card">
+            <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent;">
+                <VBox spacing="10.0" style="-fx-background-color: transparent;">
                     <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
                     
                     <Label text="%menu.transports" styleClass="label" />
@@ -97,7 +97,7 @@
             </ScrollPane>
             
             <!-- Right Side: Table -->
-            <VBox styleClass="card">
+            <VBox style="-fx-background-color: transparent;">
                 <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
                 
                 <Label text="Recent Trips" styleClass="sub-header-label" style="-fx-padding: 0 0 10 0;" />

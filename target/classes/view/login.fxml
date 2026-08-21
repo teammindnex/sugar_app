@@ -32,7 +32,9 @@
         
         <PasswordField fx:id="passwordField" promptText="%password" prefWidth="250" />
         
-        <Button text="%login" onAction="#handleLogin" styleClass="button" prefWidth="250" />
+        <Button text="%login" onAction="#handleLogin" styleClass="button" prefWidth="250" defaultButton="true" />
+        
+        <javafx.scene.control.Hyperlink fx:id="forgotPasswordLink" text="%forgot.password" onAction="#handleForgotPassword" style="-fx-text-fill: #1565C0; -fx-font-size: 13px; -fx-cursor: hand; -fx-underline: true;" />
     </VBox>
     </VBox>
 </StackPane>

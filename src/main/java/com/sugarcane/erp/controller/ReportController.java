@@ -22,6 +22,10 @@ public class ReportController {
     @FXML private DatePicker endDatePicker;
     @FXML private TableView<DailyReportItem> reportTable;
     @FXML private TableColumn<DailyReportItem, LocalDate> colDate;
+    @FXML private TableColumn<DailyReportItem, Double> colPurchaseWeight;
+    @FXML private TableColumn<DailyReportItem, Double> colPurchaseAmount;
+    @FXML private TableColumn<DailyReportItem, Double> colSaleWeight;
+    @FXML private TableColumn<DailyReportItem, Double> colSaleAmount;
 
     private ReportService reportService;
     private ObservableList<DailyReportItem> reportList;
@@ -37,6 +41,20 @@ public class ReportController {
 
         periodComboBox.setOnAction(e -> handlePeriodChange());
         
+        java.time.format.DateTimeFormatter dateFormatter = java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        javafx.util.StringConverter<LocalDate> converter = new javafx.util.StringConverter<LocalDate>() {
+            @Override
+            public String toString(LocalDate date) {
+                return date != null ? dateFormatter.format(date) : "";
+            }
+            @Override
+            public LocalDate fromString(String string) {
+                return (string != null && !string.isEmpty()) ? LocalDate.parse(string, dateFormatter) : null;
+            }
+        };
+        startDatePicker.setConverter(converter);
+        endDatePicker.setConverter(converter);
+        
         // Setup date formatter for the table column
         colDate.setCellFactory(column -> new TableCell<DailyReportItem, LocalDate>() {
             @Override
@@ -45,13 +63,49 @@ public class ReportController {
                 if (empty || item == null) {
                     setText(null);
                 } else {
-                    setText(item.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                    setText(item.format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")));
                 }
             }
         });
 
+        if (colPurchaseWeight != null) {
+            colPurchaseWeight.setCellFactory(c -> new TableCell<DailyReportItem, Double>() {
+                @Override
+                protected void updateItem(Double item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setText(empty || item == null ? null : String.format("%.3f", item));
+                }
+            });
+        }
+        if (colPurchaseAmount != null) {
+            colPurchaseAmount.setCellFactory(c -> new TableCell<DailyReportItem, Double>() {
+                @Override
+                protected void updateItem(Double item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setText(empty || item == null ? null : String.format("%.2f", item));
+                }
+            });
+        }
+        if (colSaleWeight != null) {
+            colSaleWeight.setCellFactory(c -> new TableCell<DailyReportItem, Double>() {
+                @Override
+                protected void updateItem(Double item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setText(empty || item == null ? null : String.format("%.3f", item));
+                }
+            });
+        }
+        if (colSaleAmount != null) {
+            colSaleAmount.setCellFactory(c -> new TableCell<DailyReportItem, Double>() {
+                @Override
+                protected void updateItem(Double item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setText(empty || item == null ? null : String.format("%.2f", item));
+                }
+            });
+        }
+        
         handlePeriodChange();
-        loadReports();
     }
 
     private void handlePeriodChange() {
@@ -79,6 +133,8 @@ public class ReportController {
                 endDatePicker.setValue(now.withDayOfYear(now.lengthOfYear()));
                 break;
         }
+        
+        loadReports();
     }
 
     @FXML
@@ -139,6 +195,10 @@ public class ReportController {
         alert.setTitle("माहिती");
         alert.setHeaderText(null);
         alert.setContentText(message);
+        if (reportTable != null && reportTable.getScene() != null && reportTable.getScene().getWindow() != null) {
+            alert.initOwner(reportTable.getScene().getWindow());
+            alert.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+        }
         alert.showAndWait();
     }
 }

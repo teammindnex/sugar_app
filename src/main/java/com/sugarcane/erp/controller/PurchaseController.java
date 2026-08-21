@@ -234,6 +234,12 @@ public class PurchaseController {
             showAlert("Weight must be greater than 0.");
             return false;
         }
+        double total = parseDouble(totalAmountField.getText());
+        double advance = parseDouble(advanceField.getText());
+        if (advance > total) {
+            showAlert("उचल रक्कम एकूण रकमेपेक्षा जास्त असू शकत नाही!");
+            return false;
+        }
         return true;
     }
 

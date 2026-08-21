@@ -9,12 +9,12 @@ import java.util.List;
 
 public class CustomerDAO {
 
-    public void addCustomer(Customer customer) throws SQLException {
+    public int addCustomer(Customer customer) throws SQLException {
         String sql = "INSERT INTO Customers (name, mobile, village, address, gst, opening_balance, status) " +
                      "VALUES (?, ?, ?, ?, ?, ?, ?)";
                      
         try (Connection conn = DatabaseManager.getInstance().getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             
             pstmt.setString(1, customer.getName());
             pstmt.setString(2, customer.getMobile());
@@ -25,7 +25,13 @@ public class CustomerDAO {
             pstmt.setString(7, customer.getStatus());
             
             pstmt.executeUpdate();
+            try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
         }
+        return -1;
     }
 
     public List<Customer> getAllCustomers() throws SQLException {

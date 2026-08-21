@@ -43,6 +43,7 @@
                         <Button text="Backup Database" onAction="#handleBackup" styleClass="button-secondary" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
                         <Button text="Restore Database" onAction="#handleRestore" style="-fx-background-color: -error-color; -fx-text-fill: white;" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
                     </HBox>
+                    <Button text="सर्व डेटा डिलीट करा (Testing Only)" onAction="#handleClearData" style="-fx-background-color: #ef4444; -fx-text-fill: white; -fx-font-weight: bold; -fx-margin-top: 15px;" maxWidth="Infinity" />
                 </VBox>
                 
             </VBox>

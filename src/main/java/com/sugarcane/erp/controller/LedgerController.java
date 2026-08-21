@@ -65,7 +65,7 @@ public class LedgerController {
         
         // Date Converters (DD/MM/YYYY)
         StringConverter<LocalDate> dateConverter = new StringConverter<LocalDate>() {
-            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
             @Override
             public String toString(LocalDate date) {
                 return date != null ? dateFormatter.format(date) : "";
@@ -106,7 +106,7 @@ public class LedgerController {
                             TableColumn<LedgerEntry, String> colPart, TableColumn<LedgerEntry, String> colDeb,
                             TableColumn<LedgerEntry, String> colCred, TableColumn<LedgerEntry, String> colBal) {
         
-        DateTimeFormatter outFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter outFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         colDate.setCellValueFactory(cellData -> {
             if (cellData.getValue().getDate().getYear() < 2000) return new SimpleStringProperty(""); // Opening balance date hidden
             return new SimpleStringProperty(outFormatter.format(cellData.getValue().getDate()));
@@ -204,7 +204,7 @@ public class LedgerController {
         // Build new filtered list with combined opening balance
         LedgerEntry openingEntry = new LedgerEntry(
             LocalDate.now().minusYears(10), 
-            "मागील बाकी (Opening Balance)", 
+            "मागील बाकी", 
             "",
             0.0,
             carryForwardBalance > 0 ? carryForwardBalance : 0,

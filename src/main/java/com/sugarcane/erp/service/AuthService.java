@@ -31,6 +31,22 @@ public class AuthService {
         return false;
     }
     
+    public boolean resetPassword(String username, String pin, String newPassword) {
+        User user = userDAO.getUserByUsername(username);
+        if (user == null) {
+            return false;
+        }
+        // Match user's PIN or master recovery PIN (e.g. 1234 or proprietor mobile numbers)
+        boolean isPinValid = (user.getPinHash() != null && user.getPinHash().equals(pin)) 
+                             || "1234".equals(pin) 
+                             || "7588237123".equals(pin) 
+                             || "9763948154".equals(pin);
+        if (isPinValid) {
+            return userDAO.updatePassword(username, newPassword);
+        }
+        return false;
+    }
+
     public static User getLoggedInUser() {
         return loggedInUser;
     }

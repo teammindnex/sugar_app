@@ -15,6 +15,15 @@ public class DashboardMetrics {
     private double monthlySalesWeight;
     private double yearlyPurchaseWeight;
     private double yearlySalesWeight;
+    
+    private double todayPurchaseWeight;
+    private double todaySalesWeight;
+
+    public double getTodayPurchaseWeight() { return todayPurchaseWeight; }
+    public void setTodayPurchaseWeight(double todayPurchaseWeight) { this.todayPurchaseWeight = todayPurchaseWeight; }
+
+    public double getTodaySalesWeight() { return todaySalesWeight; }
+    public void setTodaySalesWeight(double todaySalesWeight) { this.todaySalesWeight = todaySalesWeight; }
 
     public double getTodayPurchase() { return todayPurchase; }
     public void setTodayPurchase(double todayPurchase) { this.todayPurchase = todayPurchase; }

@@ -67,7 +67,7 @@ public class PdfReceiptExporter {
             headerTable.setWidthPercentage(100);
             
             try {
-                PdfPTable godsTable = new PdfPTable(2);
+                PdfPTable godsTable = new PdfPTable(1);
                 godsTable.setWidthPercentage(100);
                 
                 // Ganesh
@@ -81,19 +81,7 @@ public class PdfReceiptExporter {
                 ganeshText.setAlignment(Element.ALIGN_CENTER);
                 ganeshCell.addElement(ganeshText);
                 
-                // Bhairavnath
-                PdfPCell bhairavCell = new PdfPCell();
-                bhairavCell.setBorder(Rectangle.NO_BORDER);
-                Image bhairavImg = Image.getInstance(PdfReceiptExporter.class.getResource("/images/bhairavnath.png"));
-                bhairavImg.scaleToFit(40, 40);
-                bhairavImg.setAlignment(Element.ALIGN_CENTER);
-                bhairavCell.addElement(bhairavImg);
-                Paragraph bhairavText = new Paragraph("|| श्री भैरवनाथ प्रसन्न ||", propFont);
-                bhairavText.setAlignment(Element.ALIGN_CENTER);
-                bhairavCell.addElement(bhairavText);
-                
                 godsTable.addCell(ganeshCell);
-                godsTable.addCell(bhairavCell);
                 headerTable.addCell(godsTable);
             } catch (Exception e) {
                 // Ignore missing images
@@ -115,12 +103,12 @@ public class PdfReceiptExporter {
             PdfPTable propTable = new PdfPTable(2);
             propTable.setWidthPercentage(100);
             
-            PdfPCell prop1 = new PdfPCell(new Phrase("प्रोपा. दादासो कोंडे\n9763948154 / 7588237123", propFont));
+            PdfPCell prop1 = new PdfPCell(new Phrase("प्रोप्रा. दादासो कोंडे\n9763948154 / 7588237123", propFont));
             prop1.setHorizontalAlignment(Element.ALIGN_CENTER);
             prop1.setBorder(Rectangle.NO_BORDER);
             propTable.addCell(prop1);
             
-            PdfPCell prop2 = new PdfPCell(new Phrase("प्रोपा. विराज कोंडे\n8999875886 / 7588237122", propFont));
+            PdfPCell prop2 = new PdfPCell(new Phrase("प्रोप्रा. विराज कोंडे\n8999875886 / 7588237122", propFont));
             prop2.setHorizontalAlignment(Element.ALIGN_CENTER);
             prop2.setBorder(Rectangle.NO_BORDER);
             propTable.addCell(prop2);

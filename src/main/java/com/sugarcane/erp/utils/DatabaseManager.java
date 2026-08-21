@@ -37,6 +37,31 @@ public class DatabaseManager {
         return conn;
     }
 
+    public void clearAllData() throws SQLException {
+        try (Connection conn = getConnection();
+             Statement stmt = conn.createStatement()) {
+            String[] tables = {
+                "Worker_Daily_Entries",
+                "Expenses",
+                "Transport_Trips",
+                "Customer_Collections",
+                "Sugarcane_Sales",
+                "Farmer_Payments",
+                "Sugarcane_Purchases",
+                "Transports",
+                "Workers",
+                "Customers",
+                "Farmers"
+            };
+            
+            for (String table : tables) {
+                stmt.execute("DELETE FROM " + table + ";");
+            }
+            
+            stmt.execute("DELETE FROM sqlite_sequence WHERE name NOT IN ('Users', 'Settings');");
+        }
+    }
+
     private void initializeDatabase() {
         File dbDir = new File(DB_DIR);
         if (!dbDir.exists()) {

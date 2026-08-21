@@ -13,8 +13,13 @@ public class LedgerEntry {
     private double debit;   // Amount we owe them or they owe us
     private double credit;  // Amount paid
     private double balance;
+    private String createdAt;
 
     public LedgerEntry(LocalDate date, String billNo, String particulars, String caneType, double emptyWeight, double loadedWeight, double weight, double debit, double credit) {
+        this(date, billNo, particulars, caneType, emptyWeight, loadedWeight, weight, debit, credit, "");
+    }
+
+    public LedgerEntry(LocalDate date, String billNo, String particulars, String caneType, double emptyWeight, double loadedWeight, double weight, double debit, double credit, String createdAt) {
         this.date = date;
         this.billNo = billNo;
         this.particulars = particulars;
@@ -24,10 +29,11 @@ public class LedgerEntry {
         this.weight = weight;
         this.debit = debit;
         this.credit = credit;
+        this.createdAt = createdAt != null ? createdAt : "";
     }
 
     public LedgerEntry(LocalDate date, String particulars, String caneType, double weight, double debit, double credit) {
-        this(date, "", particulars, caneType, 0, 0, weight, debit, credit);
+        this(date, "", particulars, caneType, 0, 0, weight, debit, credit, "");
     }
 
     public LocalDate getDate() { return date; }
@@ -50,4 +56,7 @@ public class LedgerEntry {
     
     public double getBalance() { return balance; }
     public void setBalance(double balance) { this.balance = balance; }
+
+    public String getCreatedAt() { return createdAt; }
+    public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
 }
