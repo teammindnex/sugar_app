@@ -10,7 +10,7 @@
         <Insets top="20" right="20" bottom="20" left="20"/>
     </padding>
 
-    <Label text="अहवाल (Reports)" styleClass="header-label" style="-fx-font-size: 28px; -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.9), 10, 0.8, 0, 0);"/>
+    <Label text="अहवाल (Reports)" styleClass="header-label" style="-fx-font-size: 28px;"/>
 
     <VBox spacing="15" styleClass="card">
         <padding>

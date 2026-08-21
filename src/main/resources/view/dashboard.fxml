@@ -119,7 +119,7 @@
                     </GridPane>
                     
                     <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 20 0 0 0;">
-                        <Label text="ऊस व्यवहार (Sugarcane Quantity)" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.9), 10, 0.8, 0, 0);"/>
+                        <Label text="ऊस व्यवहार (Sugarcane Quantity)" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white;"/>
                         <ComboBox fx:id="sugarcaneMonthPicker" promptText="महिना निवडा (Select Month)" onAction="#loadDashboardStats" style="-fx-font-size: 14px;" />
                         <Region HBox.hgrow="ALWAYS" />
                         <Button text="अहवाल पहा (View Reports)" onAction="#showReports" styleClass="primary-button" style="-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-padding: 8 20;" />
